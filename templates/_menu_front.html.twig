@@ -1,0 +1,13 @@
+
+{% if is_granted('ROLE_PRESSE_ADMIN') %}
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="dropdown07" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">Paramètres</a>
+        <div class="dropdown-menu" aria-labelledby="dropdown07">
+            <a class="dropdown-item" href="{{ path('presse_notifier') }}">Notifier</a>
+            <a class="dropdown-item" href="{{ path('presse_destinataire_index') }}">Les destinataires</a>
+            <a class="dropdown-item" href="{{ path('presse_user_index') }}">Les utilisateurs</a>
+        </div>
+    </li>
+{% endif %}

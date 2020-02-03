@@ -1,0 +1,52 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block body %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <h3>Rechercher</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-primary" type="submit"><i class="far fa-save"></i> Rechercher</button>
+            {{ form_end(form) }}
+
+            <h5 class="text-success mt-3">Articles</h5>
+            <hr>
+            <table class="table table-bordered">
+                {% for article in articles %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.nom }}</a>
+                        </td>
+                        <td>{{ article.dateArticle|date('d-m-Y') }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">Rien trouvé</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <h5 class="text-success">Abums</h5>
+            <hr>
+            <table class="table table-bordered">
+                {% for album in albums %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('album_show', {'id': album.id}) }}">{{ album.niceName }}</a>
+                        </td>
+                        <td>{{ album.dateAlbum|date('d-m-Y') }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">Rien trouvé</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

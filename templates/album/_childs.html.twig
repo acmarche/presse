@@ -1,0 +1,17 @@
+{% if (childs | length > 0) %}
+    <table class="table table-bordered">
+        {% for row in childs|batch(2, false) %}
+            <tr>
+                {% for child in row %}
+                    {% if child.id is defined %}
+                        <td>
+                            <a href="{{ path('album_show',{'id': child.id}) }}">{{ child.niceName }}</a>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

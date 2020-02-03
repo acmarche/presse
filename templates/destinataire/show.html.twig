@@ -1,0 +1,26 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block title %}{{ destinataire }}{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <h2>{{ destinataire }}</h2>
+        </div>
+        <div class="card-body">
+            {% include '@AcMarchePresse/destinataire/_actions.html.twig' %}
+
+            {{ destinataire.email }}
+            <br />
+            Extérieur:
+            {% if destinataire.exterieur %}
+                Oui
+            {% else %}
+                Non
+            {% endif %}
+        </div>
+    </div>
+
+    {{ include('@AcMarchePresse/destinataire/_delete_form.html.twig') }}
+{% endblock %}

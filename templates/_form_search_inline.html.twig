@@ -1,0 +1,9 @@
+{{ form_start(form, {'attr':{'class': 'form-inline my-2 my-md-0'}}) }}
+{{ form_row(form.keyword) }}
+{{ form_errors(form) }}
+
+{#<form class="form-inline my-2 my-md-0" method="post" action="{{ path('presse_search',{'keyword':'rr'}) }}">
+    <input class="form-control" type="search" name="keyword" placeholder="Rechercher" aria-label="Search">
+</form>
+#}
+{{ form_end(form) }}

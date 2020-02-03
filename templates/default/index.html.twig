@@ -1,0 +1,41 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-3">
+            <img src="{{ asset('marche.png') }}" style="height: 90px;" alt="logo">
+        </div>
+        <div class="col-6 text-center"><br/>
+            <h3><strong>Revue de presse</strong></h3>
+        </div> {% if is_granted('ROLE_PRESSE_ADMIN') %}
+            <div class="col-3">
+                <br/>
+                <a href="{{ path('album_new') }}" class="btn btn-primary float-right" role="button">
+                    <i class="fas fa-plus"></i> Ajouter un nouveau mois
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <table class="table table-bordered">
+        {% for row in albums|batch(2, false) %}
+            <tr>
+                {% for album in row %}
+                    {% if album.id is defined %}
+                        <td>
+                            <a href="{{ path('album_show',{'id': album.id}) }}">{{ album.niceName }}</a>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{{ path('album_index') }}" role="button" class="btn btn-primary mt-5">Tous les albums</a>
+
+{% endblock %}

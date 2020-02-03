@@ -1,0 +1,40 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block body %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-10">
+                    <h3>{{ article.nom }}</h3>
+                </div>
+                <div class="col-2">
+                    {{ article.dateArticle ? article.dateArticle|date('d-m-Y') : '' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            {% include '@AcMarchePresse/article/_actions.html.twig' %}
+            {% if article.fileName %}
+                <a href="{{ vich_uploader_asset(article, 'file') }}">
+                    {% if 'image' in article.mime %}
+                        <img src="{{ vich_uploader_asset(article, 'file') }}"
+                             alt="{{ article.dateArticle|date('y-m-d') }}" class="img-thumbnail"/>
+                    {% else %}
+                        <i class="fas fa-download"></i> Télécharger
+                        <span class="text-muted">({{ article.mime }})</span>
+                    {% endif %}
+                </a>
+            {% endif %}
+
+            <p class="card-text mt-2">
+                {{ article.description|nl2br }}
+            </p>
+
+        </div>
+    </div>
+
+
+    {{ include('@AcMarchePresse/article/_delete_form.html.twig') }}
+{% endblock %}

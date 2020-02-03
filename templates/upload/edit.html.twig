@@ -1,0 +1,46 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block body %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <h3>Editions des articles de l'album {{ album.niceName }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {{ form_label(form.articles) }}
+            {{ form_errors(form.articles) }}
+            <table class="table table-bordered">
+                {% for articleField in form.articles %}
+                    {% set article = articleField.vars.data %}
+                    <tr>
+                        <th colspan="3">{{ article.nom }}</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if article.fileName %}
+                                <img src="{{ vich_uploader_asset(article, 'file')| imagine_filter('my_heighten_filter') }}"
+                                     alt="{{ article.dateArticle|date('y-m-d') }}" class="img-thumbnail"/>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ form_row(articleField.nom) }}<br/>
+                            {{ form_row(articleField.description) }}
+                        </td>
+                        <td>
+                            {{ form_row(articleField.dateArticle) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <button class="btn btn-primary" type="submit"><i
+                        class="far fa-save"></i> Sauvegarder
+            </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}

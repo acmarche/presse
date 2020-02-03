@@ -1,0 +1,32 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block body %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <h3>Nouveaux articles dans {{ album.niceName }}</h3>
+        </div>
+        <div class="card-body">
+            <a href="{{ path('upload_edit',{'id': album.id}) }}" role="button" class="btn btn-primary float-right">Finaliser</a>
+            <div class="clearfix mb-3"></div>
+            {{ include('@AcMarchePresse/article/_form.html.twig') }}
+        </div>
+    </div>
+
+    <a href="{{ path('album_show',{'id': album.id}) }}"><i
+                class="fas fa-arrow-left"></i> Annuler</a>
+
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/dropzone.js') }}"></script>
+    <script type="text/javascript">
+        Dropzone.options.formdrop = {
+            dictDefaultMessage: "Glissez ici vos images ou cliquez sur cette zone pour ajouter des photos",
+            init: function () {
+                this.on("addedfile", function (file) {
+                    console.log("finished");
+                });
+            }
+        };
+    </script>
+{% endblock %}

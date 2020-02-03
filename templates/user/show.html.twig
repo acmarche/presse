@@ -1,0 +1,20 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block title %}{{ user }}{% endblock %}
+
+{% block body %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <h2>{{ user }}</h2>
+        </div>
+        <div class="card-body">
+            {% include '@AcMarchePresse/user/_actions.html.twig' %}
+
+
+
+        </div>
+    </div>
+
+    {{ include('@AcMarchePresse/user/_delete_form.html.twig') }}
+{% endblock %}

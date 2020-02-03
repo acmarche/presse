@@ -1,0 +1,36 @@
+{
+  "name": "acmarche/presse",
+  "description": "Revue de presse",
+  "homepage": "https://github.com/acmarche/presse",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jean-François Sénéchal",
+      "email": "informatique@marche.be",
+      "homepage": "http://cst.marche.be",
+      "role": "Developer"
+    }
+  ],
+  "type": "project",
+  "require": {
+    "liip/imagine-bundle": "^2.3",
+    "nesbot/carbon": "^2.25",
+    "twig/extra-bundle": "^2.12",
+    "twig/intl-extra": "^2.12",
+    "vich/uploader-bundle": "^1.13"
+  },
+  "require-dev": {
+    "doctrine/doctrine-fixtures-bundle": "^3.0"
+  },
+  "config": {
+    "preferred-install": {
+      "*": "dist"
+    },
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "AcMarche\\Presse\\": "src"
+    }
+  }
+}

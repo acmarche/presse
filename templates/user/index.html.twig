@@ -1,0 +1,49 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block body %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+
+            <div class="row">
+                <div class="col-8">
+                    <h3>Liste des utilisateurs</h3>
+                </div>
+                <div class="col-4">
+                    <a class="float-right btn btn-primary" href="{{ path('presse_user_new') }}">
+                        <i class="fas fa-plus"></i> Ajouter</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Roles</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('presse_user_show', {'id': user.id}) }}">
+                                {{ user.nom }} {{ user.prenom }}</a>
+                        </td>
+                        <td>
+                            {{ user.username }}
+                        </td>
+                        <td>{{ user.roles|join(',') }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

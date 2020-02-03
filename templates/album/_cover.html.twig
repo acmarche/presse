@@ -1,0 +1,11 @@
+<a href="{{ path('album_show', {'id': album.id}) }}">
+    {% if album.imageName %}
+        <img src="{{ vich_uploader_asset(album, 'image')| imagine_filter('my_heighten_filter') }}"
+             alt="{{ album.dateAlbum|date('y-m-d') }}" class="img-thumbnail card-img-top"/>
+    {% else %}
+        {% if album.getFirstArticle %}
+            <img src="{{ vich_uploader_asset(album.getFirstArticle, 'file')| imagine_filter('miniature') }}"
+                 alt="cover" class="img-thumbnail"/>
+        {% endif %}
+    {% endif %}
+</a>

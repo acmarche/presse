@@ -1,0 +1,18 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href='{{ path('album_index') }}'>Racine</a></li>
+        {% for path in paths %}
+            {% if loop.last %}
+                <li class="breadcrumb-item active">
+                    {{ path.niceName }}
+                </li>
+            {% else %}
+                <li class="breadcrumb-item">
+                    <a href="{{ path('album_show', { 'id': path.id }) }}">
+                        {{ path.niceName }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>

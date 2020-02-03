@@ -1,0 +1,22 @@
+{% extends '@AcMarchePresse/layout_front.html.twig' %}
+
+{% block body %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <h2>{{ user }}</h2>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-primary" type="submit"><i class="far fa-save"></i> Sauvegarder</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <br/>
+    <a href="{{ path('presse_user_show',{'id': user.id}) }}"><i
+                class="fas fa-arrow-left"></i> Annuler</a>
+
+{% endblock %}

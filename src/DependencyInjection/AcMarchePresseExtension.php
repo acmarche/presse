@@ -46,6 +46,7 @@ class AcMarchePresseExtension extends Extension implements PrependExtensionInter
                         break;
                     case 'framework':
                         $this->loadConfig($container, 'framework');
+                        $this->loadConfig($container, 'security');
                         break;
                     case 'vich_uploader':
                         $this->loadConfig($container, 'vich_uploader');

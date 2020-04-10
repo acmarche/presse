@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}Revue de presse{% endblock %}</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('bundles/acmarchepresse/favicon.ico') }}"/>
     {% block stylesheets %}{% endblock %}
 
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('lightGallery/dist/css/lightgallery.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('bundles/acmarchepresse/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('bundles/acmarchepresse/lightGallery/dist/css/lightgallery.min.css') }}" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -48,14 +48,14 @@
                     {% endif %}
                 </li>
             </ul>
-            {{ render(controller('AcMarche\\Presse\\Controller\\DefaultController::formsearch')) }}
+            {{ render(path('presse_form_search')) }}
         </div>
     </div>
 </nav>
 
 <main role="main" class="container pt-3">
 
-    {% include '_flash_messages.html.twig' %}
+    {% include '@AcMarchePresse/_flash_messages.html.twig' %}
 
     {% block body %}
 
@@ -80,12 +80,13 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script src="{{ asset('lightGallery/dist/js/lightgallery.min.js') }}" crossorigin="anonymous"></script>
+<script src="{{ asset('bundles/acmarchepresse/lightGallery/dist/js/lightgallery.min.js') }}"
+        crossorigin="anonymous"></script>
 <!-- A jQuery plugin that adds cross-browser mouse wheel support. (Optional) -->
-<script src="{{ asset('lightGallery/lib/jquery.mousewheel.min.js') }}"></script>
+<script src="{{ asset('bundles/acmarchepresse/lightGallery/lib/jquery.mousewheel.min.js') }}"></script>
 <!-- lightgallery plugins -->
-<script src="{{ asset('lightGallery/modules/lg-fullscreen.min.js') }}"></script>
-<script src="{{ asset('lightGallery/modules/lg-zoom.min.js') }}"></script>
+<script src="{{ asset('bundles/acmarchepresse/lightGallery/modules/lg-fullscreen.min.js') }}"></script>
+<script src="{{ asset('bundles/acmarchepresse/lightGallery/modules/lg-zoom.min.js') }}"></script>
 {% block scripts %}
 
 {% endblock %}

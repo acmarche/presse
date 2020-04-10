@@ -76,6 +76,10 @@ class DefaultController extends AbstractController
         );
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("formsearch", name="presse_form_search")
+     */
     public function formsearch()
     {
         $form = $this->createForm(

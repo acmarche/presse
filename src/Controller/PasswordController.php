@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use AcMarche\Presse\Entity\User;
 use AcMarche\Presse\Form\UserPasswordType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,14 +18,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class PasswordController extends AbstractController
 {
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $userPasswordEncoder;
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private UserPasswordEncoderInterface $userPasswordEncoder;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -37,7 +32,7 @@ class PasswordController extends AbstractController
     /**
      * @Route("/{id}", name="presse_user_password")
      */
-    public function edit(Request $request, User $user)
+    public function edit(Request $request, User $user): RedirectResponse
     {
         $form = $this->createForm(UserPasswordType::class, $user);
         $form->handleRequest($request);

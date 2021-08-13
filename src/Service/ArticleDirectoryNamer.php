@@ -27,7 +27,7 @@ class ArticleDirectoryNamer implements DirectoryNamerInterface
     public function directoryName($object, PropertyMapping $mapping): string
     {
         $album = $object->getAlbum();
-        if (!$album) {
+        if ($album === null) {
             return 'lost';
         }
 

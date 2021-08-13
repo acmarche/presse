@@ -2,6 +2,10 @@
 
 namespace AcMarche\Presse\Entity;
 
+use DateTimeInterface;
+use DateTime;
+use Exception;
+use DateTimeImmutable;
 use AcMarche\Presse\Doctrine\IdEntityTrait;
 use AcMarche\Presse\Doctrine\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,62 +29,56 @@ class Article
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=200)
      */
-    private $nom;
+    private ?string $nom = null;
 
     /**
      * @ORM\Column(type="string", length=80)
      */
-    private $mime;
+    private ?string $mime = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string $description = null;
 
     /**
      * @ORM\Column(type="date", nullable=false)
      */
-    private $dateArticle;
+    private ?DateTimeInterface $dateArticle = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="AcMarche\Presse\Entity\Album", inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $album;
+    private ?Album $album;
 
     /**
      * NOTE: This is not a mapped field of entity metadata, just a simple property.
      *
      * @Vich\UploadableField(mapping="article_file", fileNameProperty="fileName", size="fileSize")
-     *
-     * @var File
      */
-    private $file;
+    private ?File $file = null;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
-     * @var string|null
      */
-    private $fileName;
+    private ?string $fileName = null;
 
     /**
      * @ORM\Column(type="integer")
-     *
-     * @var integer
      */
-    private $fileSize;
+    private ?int $fileSize = null;
 
     public function __construct(Album $album)
     {
         $this->album = $album;
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
+        $this->createdAt = new DateTime();
+        $this->updatedAt = new DateTime();
     }
 
     public function __toString()
@@ -95,8 +93,8 @@ class Article
      * must be able to accept an instance of 'File' as the bundle will inject one here
      * during Doctrine hydration.
      *
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
-     * @throws \Exception
+     * @param File|UploadedFile $imageFile
+     * @throws Exception
      */
     public function setFile(?File $file = null): void
     {
@@ -105,16 +103,16 @@ class Article
         if (null !== $file) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
     }
 
-    public function getFile(): ?File
+    public function getFile(): File
     {
         return $this->file;
     }
 
-    public function getNom(): ?string
+    public function getNom(): string
     {
         return $this->nom;
     }
@@ -126,7 +124,7 @@ class Article
         return $this;
     }
 
-    public function getMime(): ?string
+    public function getMime(): string
     {
         return $this->mime;
     }
@@ -150,12 +148,12 @@ class Article
         return $this;
     }
 
-    public function getDateArticle(): ?\DateTimeInterface
+    public function getDateArticle(): DateTimeInterface
     {
         return $this->dateArticle;
     }
 
-    public function setDateArticle(\DateTimeInterface $dateArticle): self
+    public function setDateArticle(DateTimeInterface $dateArticle): self
     {
         $this->dateArticle = $dateArticle;
 
@@ -174,7 +172,7 @@ class Article
         return $this;
     }
 
-    public function getFileSize(): ?int
+    public function getFileSize(): int
     {
         return $this->fileSize;
     }
@@ -186,7 +184,7 @@ class Article
         return $this;
     }
 
-    public function getAlbum(): ?Album
+    public function getAlbum(): Album
     {
         return $this->album;
     }

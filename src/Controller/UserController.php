@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use AcMarche\Presse\Entity\User;
 use AcMarche\Presse\Form\UserEditType;
 use AcMarche\Presse\Form\UserType;
@@ -19,14 +20,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class UserController extends AbstractController
 {
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $userPasswordEncoder;
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
+    private UserPasswordEncoderInterface $userPasswordEncoder;
+    private UserRepository $userRepository;
 
     public function __construct(UserPasswordEncoderInterface $userPasswordEncoder, UserRepository $userRepository)
     {
@@ -117,7 +112,7 @@ class UserController extends AbstractController
     /**
      * @Route("/{id}", name="presse_user_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, User $user): Response
+    public function delete(Request $request, User $user): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();

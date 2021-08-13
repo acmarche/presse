@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use AcMarche\Presse\Entity\Destinataire;
 use AcMarche\Presse\Form\DestinataireType;
 use AcMarche\Presse\Repository\DestinataireRepository;
@@ -17,10 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DestinataireController extends AbstractController
 {
-    /**
-     * @var DestinataireRepository
-     */
-    private $destinataireRepository;
+    private DestinataireRepository $destinataireRepository;
 
     public function __construct(DestinataireRepository $destinataireRepository)
     {
@@ -106,7 +104,7 @@ class DestinataireController extends AbstractController
     /**
      * @Route("/{id}", name="presse_destinataire_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, Destinataire $destinataire): Response
+    public function delete(Request $request, Destinataire $destinataire): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$destinataire->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();

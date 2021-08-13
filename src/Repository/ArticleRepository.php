@@ -2,6 +2,9 @@
 
 namespace AcMarche\Presse\Repository;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -22,8 +25,9 @@ class ArticleRepository extends ServiceEntityRepository
 
     /**
      * @return Article[]
+     * @param DateTime|DateTimeImmutable $dateTime
      */
-    public function getByDate(\DateTime $dateTime)
+    public function getByDate(DateTimeInterface $dateTime)
     {
         return $this->createQueryBuilder('article')
             ->andWhere('article.dateArticle = :date')

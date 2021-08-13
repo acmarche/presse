@@ -2,6 +2,8 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 use AcMarche\Presse\Form\SearchArticleType;
 use AcMarche\Presse\Repository\AlbumRepository;
 use AcMarche\Presse\Repository\ArticleRepository;
@@ -16,14 +18,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DefaultController extends AbstractController
 {
-    /**
-     * @var AlbumRepository
-     */
-    private $albumRepository;
-    /**
-     * @var ArticleRepository
-     */
-    private $articleRepository;
+    private AlbumRepository $albumRepository;
+    private ArticleRepository $articleRepository;
 
     public function __construct(AlbumRepository $albumRepository, ArticleRepository $articleRepository)
     {
@@ -35,9 +31,9 @@ class DefaultController extends AbstractController
      * @Route("/", name="homepage")
      *
      */
-    public function index()
+    public function index(): Response
     {
-        $end = new \DateTime();
+        $end = new DateTime();
         $end->modify('-7 months');
         $albums = $this->albumRepository->getLasts($end);
 
@@ -48,7 +44,7 @@ class DefaultController extends AbstractController
      * @Route("/search", name="presse_search", methods={"GET","POST"})
      *
      */
-    public function search(Request $request)
+    public function search(Request $request): Response
     {
         $albums = $articles = $args = [];
 
@@ -77,10 +73,9 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\Response
      * @Route("formsearch", name="presse_form_search")
      */
-    public function formsearch()
+    public function formsearch(): Response
     {
         $form = $this->createForm(
             SearchArticleType::class,

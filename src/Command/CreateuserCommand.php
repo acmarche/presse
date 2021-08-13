@@ -5,6 +5,7 @@ namespace AcMarche\Presse\Command;
 use AcMarche\Presse\Entity\User;
 use AcMarche\Presse\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,28 +13,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class CreateuserCommand extends Command
 {
     protected static $defaultName = 'presse:create-user';
 
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $userPasswordEncoder;
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private UserRepository $userRepository;
+    private UserPasswordHasherInterface $userPasswordEncoder;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         UserRepository $userRepository,
-        UserPasswordEncoderInterface $userPasswordEncoder,
+        UserPasswordHasherInterface $userPasswordEncoder,
         EntityManagerInterface $entityManager
     ) {
         parent::__construct();
@@ -42,7 +34,7 @@ class CreateuserCommand extends Command
         $this->userRepository = $userRepository;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Création d\'un utilisateur')
@@ -51,7 +43,7 @@ class CreateuserCommand extends Command
             ->addArgument('password', InputArgument::OPTIONAL, 'Password');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
@@ -80,7 +72,7 @@ class CreateuserCommand extends Command
             $question->setValidator(
                 function ($password) {
                     if (strlen($password) < 4) {
-                        throw new \RuntimeException(
+                        throw new RuntimeException(
                             'Le mot de passe doit faire minimum 4 caractères'
                         );
                     }
@@ -91,7 +83,7 @@ class CreateuserCommand extends Command
             $password = $helper->ask($input, $output, $question);
         }
 
-        if ($this->userRepository->findOneBy(['email' => $email])) {
+        if ($this->userRepository->findOneBy(['email' => $email]) !== null) {
             $io->error('Un utilisateur existe déjà avec cette adresse email');
 
             return 1;
@@ -104,7 +96,7 @@ class CreateuserCommand extends Command
         $user->setEmail($email);
         $user->setUsername($email);
         $user->setNom($name);
-        $user->setPassword($this->userPasswordEncoder->encodePassword($user, $password));
+        $user->setPassword($this->userPasswordEncoder->hashPassword($user, $password));
 
         if ($administrator) {
             $user->addRole($role);

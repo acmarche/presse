@@ -2,6 +2,11 @@
 
 namespace AcMarche\Presse\Entity;
 
+use DateTimeInterface;
+use DateTime;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Exception;
+use DateTimeImmutable;
 use AcMarche\Presse\Doctrine\IdEntityTrait;
 use AcMarche\Presse\Doctrine\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -27,65 +32,59 @@ class Album
     /**
      * @ORM\Column(type="string", length=80, nullable=true)
      */
-    private $nom;
+    private ?string $nom = null;
 
     /**
      * @ORM\Column(type="date")
      */
-    private $date_album;
+    private ?DateTimeInterface $date_album = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string $description = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="AcMarche\Presse\Entity\Album", inversedBy="albums")
      */
-    private $parent;
+    private ?Album $parent = null;
 
     /**
      * @ORM\OneToMany(targetEntity="AcMarche\Presse\Entity\Album", mappedBy="parent", cascade={"remove"})
      */
-    private $albums;
+    private Collection $albums;
 
     /**
      * @ORM\OneToMany(targetEntity="AcMarche\Presse\Entity\Article", mappedBy="album", cascade={"remove"} ,orphanRemoval=true)
      */
-    private $articles;
+    private Collection $articles;
 
     /**
      * NOTE: This is not a mapped field of entity metadata, just a simple property.
      *
      * @Vich\UploadableField(mapping="album_image", fileNameProperty="imageName", size="imageSize")
-     *
-     * @var File|null
      */
-    private $image;
+    private ?File $image = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @var string|null
      */
-    private $imageName;
+    private ?string $imageName = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     *
-     * @var integer|null
      */
-    private $imageSize;
+    private ?int $imageSize = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $directoryName;
+    private ?string $directoryName = null;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
+        $this->createdAt = new DateTime();
+        $this->updatedAt = new DateTime();
         $this->albums = new ArrayCollection();
         $this->articles = new ArrayCollection();
     }
@@ -106,7 +105,7 @@ class Album
             return $this->nom;
         }
 
-        if (!$this->getParent()) {
+        if ($this->getParent() === null) {
             return $this->date_album->format('F Y');
         }
 
@@ -117,7 +116,7 @@ class Album
     /**
      * @return string|null
      */
-    public function getDirectoryName(): ?string
+    public function getDirectoryName(): string
     {
         return $this->directoryName;
     }
@@ -146,8 +145,8 @@ class Album
      * must be able to accept an instance of 'File' as the bundle will inject one here
      * during Doctrine hydration.
      *
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
-     * @throws \Exception
+     * @param File|UploadedFile $imageFile
+     * @throws Exception
      */
     public function setImage(?File $image = null): void
     {
@@ -156,7 +155,7 @@ class Album
         if (null !== $image) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the image is lost
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new DateTimeImmutable();
         }
     }
 
@@ -165,7 +164,7 @@ class Album
         return $this->image;
     }
 
-    public function getNom(): ?string
+    public function getNom(): string
     {
         return $this->nom;
     }
@@ -189,7 +188,7 @@ class Album
         return $this;
     }
 
-    public function getParent(): ?self
+    public function getParent(): ?\AcMarche\Presse\Entity\Album
     {
         return $this->parent;
     }
@@ -204,7 +203,7 @@ class Album
     /**
      * @return Collection|Album[]
      */
-    public function getAlbums(): Collection
+    public function getAlbums(): ArrayCollection
     {
         return $this->albums;
     }
@@ -235,7 +234,7 @@ class Album
     /**
      * @return Collection|Article[]
      */
-    public function getArticles(): Collection
+    public function getArticles(): ArrayCollection
     {
         return $this->articles;
     }
@@ -263,12 +262,12 @@ class Album
         return $this;
     }
 
-    public function getDateAlbum(): ?\DateTimeInterface
+    public function getDateAlbum(): DateTimeInterface
     {
         return $this->date_album;
     }
 
-    public function setDateAlbum(\DateTimeInterface $date_album): self
+    public function setDateAlbum(DateTimeInterface $date_album): self
     {
         $this->date_album = $date_album;
 

@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Exception;
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Form\ArticlesEditType;
@@ -23,18 +24,9 @@ use function Sodium\add;
  */
 class UploadController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-    /**
-     * @var UploadHandler
-     */
-    private $uploadHandler;
-    /**
-     * @var ArticleRepository
-     */
-    private $articleRepository;
+    private EntityManagerInterface $entityManager;
+    private UploadHandler $uploadHandler;
+    private ArticleRepository $articleRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -50,7 +42,7 @@ class UploadController extends AbstractController
      * @Route("/upload/{id}", name="presse_upload")
      *
      */
-    public function upload(Request $request, Album $album)
+    public function upload(Request $request, Album $album): Response
     {
         $article = new Article($album);
         /**
@@ -67,7 +59,7 @@ class UploadController extends AbstractController
 
         try {
             $this->uploadHandler->upload($article, 'file');
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $this->render('@AcMarchePresse/upload/_response_fail.html.twig', ['error' => $exception->getMessage()]);
         }
 

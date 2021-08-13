@@ -2,6 +2,8 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use DateTime;
 use AcMarche\Presse\Form\NotifierType;
 use AcMarche\Presse\Repository\ArticleRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -17,10 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class NotifierController extends AbstractController
 {
 
-    /**
-     * @var ArticleRepository
-     */
-    private $articleRepository;
+    private ArticleRepository $articleRepository;
 
     public function __construct(ArticleRepository $articleRepository)
     {
@@ -31,9 +30,9 @@ class NotifierController extends AbstractController
      * @Route("/notifier", name="presse_notifier", methods={"GET","POST"})
      *
      */
-    public function index(Request $request)
+    public function index(Request $request): RedirectResponse
     {
-        $date = new \DateTime();
+        $date = new DateTime();
         $form = $this->createForm(NotifierType::class, ['date'=>$date]);
         $form->handleRequest($request);
 

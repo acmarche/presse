@@ -14,15 +14,14 @@ class User implements UserInterface
     use IdEntityTrait;
 
     /**
-     * @var string
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $username;
+    private ?string $username = null;
 
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private $email;
+    private ?string $email = null;
 
     /**
      * @ORM\Column(type="json")
@@ -33,24 +32,24 @@ class User implements UserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private ?string $password = null;
 
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private $nom;
+    private ?string $nom = null;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $prenom;
+    private ?string $prenom = null;
 
     public function __toString()
     {
         return $this->username;
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -62,7 +61,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRoles(): ?array
+    public function getRoles(): array
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_GRR
@@ -92,11 +91,7 @@ class User implements UserInterface
 
     public function hasRole(string $role): bool
     {
-        if (in_array($role, $this->getRoles(), true)) {
-            return true;
-        }
-
-        return false;
+        return in_array($role, $this->getRoles(), true);
     }
 
     public function setRoles(array $roles): self
@@ -106,7 +101,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -121,7 +116,7 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getSalt()
+    public function getSalt(): void
     {
         // not needed when using the "bcrypt" algorithm in security.yaml
     }
@@ -129,13 +124,13 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
 
-    public function getNom(): ?string
+    public function getNom(): string
     {
         return $this->nom;
     }
@@ -147,7 +142,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getPrenom(): ?string
+    public function getPrenom(): string
     {
         return $this->prenom;
     }
@@ -159,7 +154,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }

@@ -19,18 +19,9 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 class AlbumService
 {
 
-    /**
-     * @var AlbumRepository
-     */
-    private $albumRepository;
-    /**
-     * @var PropertyMappingFactory
-     */
-    private $propertyMappingFactory;
-    /**
-     * @var Filesystem
-     */
-    private $storage;
+    private AlbumRepository $albumRepository;
+    private PropertyMappingFactory $propertyMappingFactory;
+    private Filesystem $storage;
 
 
     public function __construct(
@@ -51,7 +42,7 @@ class AlbumService
      * premier parent => mode : indice 0
      *
      */
-    function getPath(Album $album)
+    function getPath(Album $album): array
     {
         $path = $this->getFullPath($album);
         $path[] = $album;
@@ -59,11 +50,11 @@ class AlbumService
         return $path;
     }
 
-    function getFullPath(Album $album)
+    function getFullPath(Album $album): array
     {
         $path = [];
         $parent = $album->getParent();
-        if ($parent) {
+        if ($parent !== null) {
             $path[] = $parent;
             $path = array_merge(self::getFullPath($parent), $path);
         }
@@ -75,7 +66,7 @@ class AlbumService
     {
         $parent = $album->getParent();
         $paths = [];
-        if ($parent) {
+        if ($parent !== null) {
             $paths[] = $parent->getDateAlbum()->format('Y-m-d');
         }
 

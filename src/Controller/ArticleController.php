@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Form\ArticlesEditType;
@@ -19,10 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ArticleController extends AbstractController
 {
-    /**
-     * @var ArticleRepository
-     */
-    private $articleRepository;
+    private ArticleRepository $articleRepository;
 
     public function __construct(ArticleRepository $articleRepository)
     {
@@ -32,7 +30,7 @@ class ArticleController extends AbstractController
     /**
      * @Route("/", name="article_index", methods={"GET"})
      */
-    public function index(): Response
+    public function index(): RedirectResponse
     {
         return $this->redirectToRoute('homepage');
     }
@@ -107,7 +105,7 @@ class ArticleController extends AbstractController
      * @Route("/{id}", name="article_delete", methods={"DELETE"})
      * @IsGranted("ROLE_PRESSE_ADMIN")
      */
-    public function delete(Request $request, Article $article): Response
+    public function delete(Request $request, Article $article): RedirectResponse
     {
         $album = $article->getAlbum();
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {

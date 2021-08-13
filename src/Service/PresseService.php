@@ -13,7 +13,7 @@ namespace AcMarche\Presse\Service;
 
 class PresseService
 {
-    public static function getRoles()
+    public static function getRoles(): array
     {
         return ['ROLE_PRESSE', 'ROLE_PRESSE_ADMIN'];
     }

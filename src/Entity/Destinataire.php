@@ -14,22 +14,22 @@ class Destinataire
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private $nom;
+    private ?string $nom = null;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $prenom;
+    private ?string $prenom = null;
 
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private $email;
+    private ?string $email = null;
 
     /**
      * @ORM\Column(type="boolean")
@@ -46,7 +46,7 @@ class Destinataire
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getNom(): string
     {
         return $this->nom;
     }
@@ -70,7 +70,7 @@ class Destinataire
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }

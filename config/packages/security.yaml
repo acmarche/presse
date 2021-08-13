@@ -1,21 +1,18 @@
 security:
-    encoders:
-        AcMarche\Presse\Entity\User:
-            algorithm: auto
+  encoders:
+    AcMarche\Presse\Entity\User:
+      algorithm: auto
 
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
-    providers:
-        # used to reload user from session & other features (e.g. switch_user)
-        presse_user_provider:
-            entity:
-                class: AcMarche\Presse\Entity\User
-                property: username
-    firewalls:
-        main:
-            anonymous: true
-            guard:
-                authenticators:
-                    - AcMarche\Presse\Security\AppPresseAuthenticator
-            logout:
-                path: app_logout
+  # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+  providers:
+    # used to reload user from session & other features (e.g. switch_user)
+    presse_user_provider:
+      entity:
+        class: AcMarche\Presse\Entity\User
+        property: username
+  firewalls:
+    main:
+      custom_authenticator: AcMarche\Presse\Security\AppPresseAuthenticator
+      logout:
+        path: app_logout
 

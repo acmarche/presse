@@ -11,13 +11,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserEditType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->remove('password');
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
             [
@@ -26,7 +26,7 @@ class UserEditType extends AbstractType
         );
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return UserType::class;
     }

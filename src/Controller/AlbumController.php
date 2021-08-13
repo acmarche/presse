@@ -2,6 +2,9 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Exception;
+use DateTime;
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Form\AlbumType;
 use AcMarche\Presse\Repository\AlbumRepository;
@@ -19,18 +22,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AlbumController extends AbstractController
 {
-    /**
-     * @var AlbumRepository
-     */
-    private $albumRepository;
-    /**
-     * @var AlbumService
-     */
-    private $albumService;
-    /**
-     * @var ArticleRepository
-     */
-    private $articleRepository;
+    private AlbumRepository $albumRepository;
+    private AlbumService $albumService;
+    private ArticleRepository $articleRepository;
 
     public function __construct(
         AlbumRepository $albumRepository,
@@ -61,20 +55,20 @@ class AlbumController extends AbstractController
      * @param Request $request
      * @param Album|null $parent
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      * @IsGranted("ROLE_PRESSE_ADMIN")
      */
     public function new(Request $request, ?Album $parent = null): Response
     {
         $album = new Album();
-        $today = new \DateTime();
+        $today = new DateTime();
         $album->setDateAlbum($today);
 
-        if ($parent) {
+        if ($parent !== null) {
             $album->setParent($parent);
         }
         else {
-            $album->setDateAlbum(new \DateTime('first day of this month'));
+            $album->setDateAlbum(new DateTime('first day of this month'));
         }
 
         $form = $this->createForm(AlbumType::class, $album);
@@ -88,7 +82,7 @@ class AlbumController extends AbstractController
             $entityManager->flush();
 
 
-            if (!$album->getImage()) {
+            if ($album->getImage() === null) {
                 try {
                     $this->albumService->createFolder($album);
                 } catch (IOException $exception) {
@@ -160,7 +154,7 @@ class AlbumController extends AbstractController
      * @Route("/{id}", name="album_delete", methods={"DELETE"})
      * @IsGranted("ROLE_PRESSE_ADMIN")
      */
-    public function delete(Request $request, Album $album): Response
+    public function delete(Request $request, Album $album): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$album->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();

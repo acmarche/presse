@@ -1,0 +1,23 @@
+{% if is_granted('ROLE_PRESSE_ADMIN') %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+           data-bs-toggle="dropdown" aria-expanded="false">
+            Paramètres
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{{ path('presse_notifier') }}">Notifier</a>
+            <a class="dropdown-item" href="{{ path('presse_destinataire_index') }}">Les destinataires</a>
+            <a class="dropdown-item" href="{{ path('presse_user_index') }}">Les utilisateurs</a>
+        </div>
+    </li>
+{% endif %}
+    {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+        <li class="nav-item">
+            <a href="{{ path('app_login') }}" class="nav-link"><i class="fas fa-sign-in-alt"></i>
+                Se connecter</a>
+        </li>
+    {% else %}
+        <li class="nav-item"><a href="{{ path('app_logout') }}" class="nav-link"><i class="fas fa-sign-out-alt"></i>
+                Déconnexion</a>
+        </li>
+    {% endif %}

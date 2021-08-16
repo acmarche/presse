@@ -1,0 +1,19 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm border-bottom">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('homepage') }}">
+            <i class="fa fa-cross d-inline-block align-text-top"></i>
+            <span class="ms-2 fs-4 navbar-text">Revue de presse</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            {% include '@AcMarchePresse/_menu.html.twig' %}
+        </div>
+        <form class="d-flex" action="{{ path('presse_search') }}">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Rechercher</button>
+        </form>
+    </div>
+</nav>

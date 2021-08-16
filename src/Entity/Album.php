@@ -4,11 +4,12 @@ namespace AcMarche\Presse\Entity;
 
 use DateTimeInterface;
 use DateTime;
+use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
+use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Exception;
 use DateTimeImmutable;
 use AcMarche\Presse\Doctrine\IdEntityTrait;
-use AcMarche\Presse\Doctrine\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,9 +25,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @UniqueEntity(fields={"parent","date_album"}, message="Un album a déjà cette date")
  * @Vich\Uploadable
  */
-class Album
+class Album  implements TimestampableInterface
 {
-    use TimestampableEntityTrait;
+    use TimestampableTrait;
     use IdEntityTrait;
 
     /**

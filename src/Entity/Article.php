@@ -7,10 +7,11 @@ use DateTime;
 use Exception;
 use DateTimeImmutable;
 use AcMarche\Presse\Doctrine\IdEntityTrait;
-use AcMarche\Presse\Doctrine\TimestampableEntityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
+use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -19,10 +20,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @ORM\Entity(repositoryClass="AcMarche\Presse\Repository\ArticleRepository")
  * @Vich\Uploadable
  */
-class Article
+class Article implements TimestampableInterface
 {
     use IdEntityTrait;
-    use TimestampableEntityTrait;
+    use TimestampableTrait;
 
     /**
      * @ORM\Id()

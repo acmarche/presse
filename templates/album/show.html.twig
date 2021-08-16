@@ -1,4 +1,4 @@
-{% extends '@AcMarchePresse/layout_front.html.twig' %}
+{% extends '@AcMarchePresse/base.html.twig' %}
 
 {% block title %}{{ album }}{% endblock %}
 
@@ -23,14 +23,4 @@
     </div>
 
     {{ include('@AcMarchePresse/album/_delete_form.html.twig') }}
-{% endblock %}
-{% block scripts %}
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#lightgallery").lightGallery({
-                    'selector': '.card-jf'
-                }
-            );
-        });
-    </script>
 {% endblock %}

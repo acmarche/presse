@@ -13,6 +13,6 @@ security:
   firewalls:
     main:
       custom_authenticator: AcMarche\Presse\Security\AppPresseAuthenticator
+      provider: presse_user_provider
       logout:
         path: app_logout
-

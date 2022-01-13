@@ -1,4 +1,4 @@
-import { Controller } from 'stimulus';
+import { Controller } from '@hotwired/stimulus';
 import lightGallery from 'lightgallery';
 // Plugins
 import lgThumbnail from 'lightgallery/plugins/thumbnail'

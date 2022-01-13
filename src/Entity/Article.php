@@ -2,21 +2,19 @@
 
 namespace AcMarche\Presse\Entity;
 
-use AcMarche\Presse\Repository\ArticleRepository;
-use Stringable;
-use DateTimeInterface;
-use DateTime;
-use Exception;
-use DateTimeImmutable;
 use AcMarche\Presse\Doctrine\IdEntityTrait;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use AcMarche\Presse\Repository\ArticleRepository;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
+use Stringable;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @Vich\Uploadable
@@ -48,15 +46,19 @@ class Article implements TimestampableInterface, Stringable
     private ?string $fileName = null;
     #[ORM\Column(type: 'integer')]
     private ?int $fileSize = null;
-    public function __construct(#[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'articles')] #[ORM\JoinColumn(nullable: false)] private ?Album $album)
-    {
+
+    public function __construct(
+        #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'articles')] #[ORM\JoinColumn(nullable: false)] private ?Album $album
+    ) {
         $this->createdAt = new DateTime();
         $this->updatedAt = new DateTime();
     }
+
     public function __toString(): string
     {
         return (string) $this->nom;
     }
+
     /**
      * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
      * of 'UploadedFile' is injected into this setter to trigger the update. If this
@@ -65,6 +67,7 @@ class Article implements TimestampableInterface, Stringable
      * during Doctrine hydration.
      *
      * @param File|UploadedFile $imageFile
+     *
      * @throws Exception
      */
     public function setFile(?File $file = null): void
@@ -77,74 +80,89 @@ class Article implements TimestampableInterface, Stringable
             $this->updatedAt = new DateTimeImmutable();
         }
     }
+
     public function getFile(): ?File
     {
         return $this->file;
     }
+
     public function getNom(): ?string
     {
         return $this->nom;
     }
+
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
 
         return $this;
     }
+
     public function getMime(): ?string
     {
         return $this->mime;
     }
+
     public function setMime(string $mime): self
     {
         $this->mime = $mime;
 
         return $this;
     }
+
     public function getDescription(): ?string
     {
         return $this->description;
     }
+
     public function setDescription(?string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
+
     public function getDateArticle(): ?\DateTimeInterface
     {
         return $this->dateArticle;
     }
+
     public function setDateArticle(DateTimeInterface $dateArticle): self
     {
         $this->dateArticle = $dateArticle;
 
         return $this;
     }
+
     public function getFileName(): ?string
     {
         return $this->fileName;
     }
+
     public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
 
         return $this;
     }
+
     public function getFileSize(): ?int
     {
         return $this->fileSize;
     }
+
     public function setFileSize(?int $fileSize): self
     {
         $this->fileSize = $fileSize;
 
         return $this;
     }
+
     public function getAlbum(): ?Album
     {
         return $this->album;
     }
+
     public function setAlbum(?Album $album): self
     {
         $this->album = $album;

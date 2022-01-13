@@ -67,7 +67,5 @@ class AlbumRepository extends ServiceEntityRepository
             ->orderBy('album.date_album', 'ASC')
             ->getQuery()
             ->getResult();
-
     }
-
 }

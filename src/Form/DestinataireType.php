@@ -19,7 +19,6 @@ class DestinataireType extends AbstractType
                 'nom',
                 TextType::class,
                 [
-
                 ]
             )
             ->add(

@@ -16,11 +16,14 @@ use Symfony\Component\Routing\Annotation\Route;
 #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
 class PasswordController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface      $entityManager, private UserPasswordHasherInterface $userPasswordEncoder)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private UserPasswordHasherInterface $userPasswordEncoder
+    ) {
     }
+
     #[Route(path: '/{id}', name: 'presse_user_password')]
-    public function edit(Request $request, User $user) : Response
+    public function edit(Request $request, User $user): Response
     {
         $form = $this->createForm(UserPasswordType::class, $user);
         $form->handleRequest($request);
@@ -32,9 +35,12 @@ class PasswordController extends AbstractController
 
             return $this->redirectToRoute(
                 'presse_user_show',
-                ['id' => $user->getId()]
+                [
+                    'id' => $user->getId(),
+                ]
             );
         }
+
         return $this->render(
             '@AcMarchePresse/user/edit_password.html.twig',
             [

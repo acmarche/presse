@@ -17,7 +17,10 @@ class SearchArticleType extends AbstractType
                 SearchType::class,
                 [
                     'label' => false,
-                    'attr' => ['placeholder' => 'Rechercher',],
+                    'attr' => [
+                        'placeholder' => 'Rechercher',
+                    ],
+                    
                 ]
             );
     }

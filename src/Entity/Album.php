@@ -2,27 +2,28 @@
 
 namespace AcMarche\Presse\Entity;
 
-use AcMarche\Presse\Repository\AlbumRepository;
-use Stringable;
-use DateTimeInterface;
-use DateTime;
-use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
-use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Exception;
-use DateTimeImmutable;
 use AcMarche\Presse\Doctrine\IdEntityTrait;
+use AcMarche\Presse\Repository\AlbumRepository;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
+use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
+use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
+use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * ORM\Table(uniqueConstraints={
  *     ORM\UniqueConstraint(columns={"parent_id","date_album"})
- * })
+ * }).
+ *
  * @Vich\Uploadable
  */
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
@@ -37,9 +38,9 @@ class Album implements TimestampableInterface, Stringable
     private ?DateTimeInterface $date_album = null;
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
-    #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'albums')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'albums')]
     private ?Album $parent = null;
-    #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'parent', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['remove'])]
     private iterable|Collection $albums;
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'album', cascade: ['remove'], orphanRemoval: true)]
     private iterable|Collection $articles;
@@ -55,6 +56,7 @@ class Album implements TimestampableInterface, Stringable
     private ?int $imageSize = null;
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $directoryName = null;
+
     public function __construct()
     {
         $this->createdAt = new DateTime();
@@ -62,6 +64,7 @@ class Album implements TimestampableInterface, Stringable
         $this->albums = new ArrayCollection();
         $this->articles = new ArrayCollection();
     }
+
     public function __toString(): string
     {
         if ($this->nom) {
@@ -70,36 +73,39 @@ class Album implements TimestampableInterface, Stringable
 
         return $this->date_album->format('d-m-Y');
     }
+
     public function niceName(): string
     {
-
         if ($this->nom) {
             return $this->nom;
         }
 
-        if ($this->getParent() === null) {
+        if (null === $this->getParent()) {
             return $this->date_album->format('F Y');
         }
 
         return $this->date_album->format('d-m-Y');
-
     }
+
     public function getDirectoryName(): ?string
     {
         return $this->directoryName;
     }
+
     public function setDirectoryName(string $directoryName): void
     {
         $this->directoryName = $directoryName;
     }
+
     public function getFirstArticle(): ?Article
     {
-        if (count($this->articles) > 0) {
+        if (\count($this->articles) > 0) {
             return $this->articles->first();
         }
 
         return null;
     }
+
     /**
      * If manually uploading a image (i.e. not using Symfony Form) ensure an instance
      * of 'UploadedFile' is injected into this setter to trigger the update. If this
@@ -108,6 +114,7 @@ class Album implements TimestampableInterface, Stringable
      * during Doctrine hydration.
      *
      * @param File|UploadedFile $imageFile
+     *
      * @throws Exception
      */
     public function setImage(?File $image = null): void
@@ -120,40 +127,48 @@ class Album implements TimestampableInterface, Stringable
             $this->updatedAt = new DateTimeImmutable();
         }
     }
+
     public function getImage(): ?File
     {
         return $this->image;
     }
+
     public function getNom(): ?string
     {
         return $this->nom;
     }
+
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
 
         return $this;
     }
+
     public function getDescription(): ?string
     {
         return $this->description;
     }
+
     public function setDescription(?string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
-    public function getParent(): ?Album
+
+    public function getParent(): ?self
     {
         return $this->parent;
     }
+
     public function setParent(?self $parent): self
     {
         $this->parent = $parent;
 
         return $this;
     }
+
     /**
      * @return Collection|Album[]
      */
@@ -161,16 +176,18 @@ class Album implements TimestampableInterface, Stringable
     {
         return $this->albums;
     }
-    public function addAlbum(Album $album): self
+
+    public function addAlbum(self $album): self
     {
-        if (!$this->albums->contains($album)) {
+        if (! $this->albums->contains($album)) {
             $this->albums[] = $album;
             $album->setParent($this);
         }
 
         return $this;
     }
-    public function removeAlbum(Album $album): self
+
+    public function removeAlbum(self $album): self
     {
         if ($this->albums->contains($album)) {
             $this->albums->removeElement($album);
@@ -182,6 +199,7 @@ class Album implements TimestampableInterface, Stringable
 
         return $this;
     }
+
     /**
      * @return Collection|Article[]
      */
@@ -189,15 +207,17 @@ class Album implements TimestampableInterface, Stringable
     {
         return $this->articles;
     }
+
     public function addArticle(Article $article): self
     {
-        if (!$this->articles->contains($article)) {
+        if (! $this->articles->contains($article)) {
             $this->articles[] = $article;
             $article->setAlbum($this);
         }
 
         return $this;
     }
+
     public function removeArticle(Article $article): self
     {
         if ($this->articles->contains($article)) {
@@ -210,30 +230,36 @@ class Album implements TimestampableInterface, Stringable
 
         return $this;
     }
+
     public function getDateAlbum(): ?\DateTimeInterface
     {
         return $this->date_album;
     }
+
     public function setDateAlbum(DateTimeInterface $date_album): self
     {
         $this->date_album = $date_album;
 
         return $this;
     }
+
     public function getImageName(): ?string
     {
         return $this->imageName;
     }
+
     public function setImageName(?string $imageName): self
     {
         $this->imageName = $imageName;
 
         return $this;
     }
+
     public function getImageSize(): ?int
     {
         return $this->imageSize;
     }
+
     public function setImageSize(?int $imageSize): self
     {
         $this->imageSize = $imageSize;

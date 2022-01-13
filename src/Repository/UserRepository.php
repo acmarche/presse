@@ -22,7 +22,9 @@ class UserRepository extends ServiceEntityRepository
 
     /**
      * @return int|mixed|string|null
+     *
      * @throws NonUniqueResultException
+     *
      * @see UserProviderListener::checkPassport
      */
     public function loadUserByIdentifier(string $username)
@@ -33,5 +35,4 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
 }

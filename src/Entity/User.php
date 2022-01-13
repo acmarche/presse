@@ -32,7 +32,7 @@ class User implements UserInterface, Stringable, PasswordAuthenticatedUserInterf
 
     public function __toString(): string
     {
-        return (string)$this->username;
+        return (string) $this->username;
     }
 
     public function getUserIdentifier(): string
@@ -63,7 +63,7 @@ class User implements UserInterface, Stringable, PasswordAuthenticatedUserInterf
 
     public function addRole(string $role): self
     {
-        if (!in_array($role, $this->roles, true)) {
+        if (! \in_array($role, $this->roles, true)) {
             $this->roles[] = $role;
         }
 
@@ -72,7 +72,7 @@ class User implements UserInterface, Stringable, PasswordAuthenticatedUserInterf
 
     public function removeRole(string $role): self
     {
-        if (in_array($role, $this->roles, true)) {
+        if (\in_array($role, $this->roles, true)) {
             $index = array_search($role, $this->roles);
             unset($this->roles[$index]);
         }
@@ -82,7 +82,7 @@ class User implements UserInterface, Stringable, PasswordAuthenticatedUserInterf
 
     public function hasRole(string $role): bool
     {
-        return in_array($role, $this->getRoles(), true);
+        return \in_array($role, $this->getRoles(), true);
     }
 
     public function setRoles(array $roles): self

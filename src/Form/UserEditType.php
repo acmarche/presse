@@ -3,9 +3,7 @@
 namespace AcMarche\Presse\Form;
 
 use AcMarche\Presse\Entity\User;
-use AcMarche\Presse\Service\PresseService;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

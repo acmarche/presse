@@ -19,15 +19,16 @@ class ArticleType extends AbstractType
                 'description',
                 TextareaType::class,
                 [
-                    'required'=>false,
-                    'attr' => ['rows' => 5],
+                    'required' => false,
+                    'attr' => [
+                        'rows' => 5,
+                    ],
                 ]
             )
             ->add(
                 'dateArticle',
                 DateType::class,
                 [
-
                 ]
             );
     }

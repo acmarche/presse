@@ -3,21 +3,21 @@
  * Created by PhpStorm.
  * User: jfsenechal
  * Date: 11/01/19
- * Time: 11:38
+ * Time: 11:38.
  */
 
 namespace AcMarche\Presse\Service;
 
-
 use AcMarche\Presse\Entity\Album;
-use AcMarche\Presse\Repository\AlbumRepository;
 use Symfony\Component\Filesystem\Filesystem;
+use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 class AlbumService
 {
-
-    public function __construct(private AlbumRepository $albumRepository, private Filesystem $storage)
-    {
+    public function __construct(
+        private PropertyMappingFactory $propertyMappingFactory,
+        private Filesystem $storage
+    ) {
     }
 
     /**
@@ -25,9 +25,8 @@ class AlbumService
      *
      * donne vetement enfant
      * premier parent => mode : indice 0
-     *
      */
-    function getPath(Album $album): array
+    public function getPath(Album $album): array
     {
         $path = $this->getFullPath($album);
         $path[] = $album;
@@ -35,11 +34,11 @@ class AlbumService
         return $path;
     }
 
-    function getFullPath(Album $album): array
+    public function getFullPath(Album $album): array
     {
         $path = [];
         $parent = $album->getParent();
-        if ($parent !== null) {
+        if (null !== $parent) {
             $path[] = $parent;
             $path = array_merge(self::getFullPath($parent), $path);
         }
@@ -47,16 +46,25 @@ class AlbumService
         return $path;
     }
 
-    static function getDirectory(Album $album): string
+    public static function getDirectory(Album $album): string
     {
         $parent = $album->getParent();
         $paths = [];
-        if ($parent !== null) {
+        if (null !== $parent) {
             $paths[] = $parent->getDateAlbum()->format('Y-m-d');
         }
 
         $paths[] = $album->getDateAlbum()->format('Y-m-d');
 
-        return implode(DIRECTORY_SEPARATOR, $paths);
+        return implode(\DIRECTORY_SEPARATOR, $paths);
+    }
+
+    public function createFolder(Album $album)
+    {
+        $mappings = $this->propertyMappingFactory->fromObject($album);
+        $mapping = $mappings[0];
+        $path = $mapping->getUploadDestination();
+        $directory = $path.\DIRECTORY_SEPARATOR.self::getDirectory($album);
+        $this->storage->mkdir($directory);
     }
 }

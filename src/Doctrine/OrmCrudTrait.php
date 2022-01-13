@@ -1,14 +1,14 @@
 <?php
 
-
 namespace AcMarche\Presse\Doctrine;
-
 
 use Doctrine\ORM\EntityManager;
 
 trait OrmCrudTrait
 {
-    /** @var EntityManager */
+    /**
+     * @var EntityManager
+     */
     protected $_em;
 
     public function insert(object $object): void

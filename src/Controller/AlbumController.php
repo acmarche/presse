@@ -2,18 +2,18 @@
 
 namespace AcMarche\Presse\Controller;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Exception;
-use DateTime;
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Form\AlbumType;
 use AcMarche\Presse\Repository\AlbumRepository;
 use AcMarche\Presse\Repository\ArticleRepository;
 use AcMarche\Presse\Service\AlbumService;
+use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,11 +21,16 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route(path: '/album')]
 class AlbumController extends AbstractController
 {
-    public function __construct(private AlbumRepository $albumRepository, private AlbumService $albumService, private ArticleRepository $articleRepository, private ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        private AlbumRepository $albumRepository,
+        private AlbumService $albumService,
+        private ArticleRepository $articleRepository,
+        private ManagerRegistry $managerRegistry
+    ) {
     }
+
     #[Route(path: '/', name: 'album_index', methods: ['GET'])]
-    public function index() : Response
+    public function index(): Response
     {
         return $this->render(
             '@AcMarchePresse/album/index.html.twig',
@@ -34,21 +39,21 @@ class AlbumController extends AbstractController
             ]
         );
     }
+
     /**
      * @throws Exception
      */
     #[Route(path: '/new', name: 'album_new', methods: ['GET', 'POST'])]
     #[Route(path: '/new/{id}', name: 'album_add_child', methods: ['GET', 'POST'])]
     #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
-    public function new(Request $request, ?Album $parent = null) : Response
+    public function new(Request $request, ?Album $parent = null): Response
     {
         $album = new Album();
         $today = new DateTime();
         $album->setDateAlbum($today);
-        if ($parent !== null) {
+        if (null !== $parent) {
             $album->setParent($parent);
-        }
-        else {
+        } else {
             $album->setDateAlbum(new DateTime('first day of this month'));
         }
         $form = $this->createForm(AlbumType::class, $album);
@@ -60,8 +65,7 @@ class AlbumController extends AbstractController
             $entityManager->persist($album);
             $entityManager->flush();
 
-
-            if ($album->getImage() === null) {
+            if (null === $album->getImage()) {
                 try {
                     $this->albumService->createFolder($album);
                 } catch (IOException $exception) {
@@ -71,8 +75,11 @@ class AlbumController extends AbstractController
 
             $this->addFlash('success', 'L\'album a bien été créé');
 
-            return $this->redirectToRoute('album_show', ['id' => $album->getId()]);
+            return $this->redirectToRoute('album_show', [
+                'id' => $album->getId(),
+            ]);
         }
+
         return $this->render(
             '@AcMarchePresse/album/new.html.twig',
             [
@@ -81,12 +88,14 @@ class AlbumController extends AbstractController
             ]
         );
     }
+
     #[Route(path: '/{id}', name: 'album_show', methods: ['GET'])]
-    public function show(Album $album) : Response
+    public function show(Album $album): Response
     {
         $paths = $this->albumService->getPath($album);
         $articles = $this->articleRepository->findByAlbum($album);
         $childs = $this->albumRepository->getChilds($album);
+
         return $this->render(
             '@AcMarchePresse/album/show.html.twig',
             [
@@ -97,9 +106,10 @@ class AlbumController extends AbstractController
             ]
         );
     }
+
     #[Route(path: '/{id}/edit', name: 'album_edit', methods: ['GET', 'POST'])]
     #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
-    public function edit(Request $request, Album $album) : Response
+    public function edit(Request $request, Album $album): Response
     {
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
@@ -108,8 +118,11 @@ class AlbumController extends AbstractController
 
             $this->addFlash('success', 'L\'album a bien été modifié');
 
-            return $this->redirectToRoute('album_show', ['id' => $album->getId()]);
+            return $this->redirectToRoute('album_show', [
+                'id' => $album->getId(),
+            ]);
         }
+
         return $this->render(
             '@AcMarchePresse/album/edit.html.twig',
             [
@@ -118,9 +131,10 @@ class AlbumController extends AbstractController
             ]
         );
     }
+
     #[Route(path: '/{id}', name: 'album_delete', methods: ['DELETE'])]
     #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
-    public function delete(Request $request, Album $album) : RedirectResponse
+    public function delete(Request $request, Album $album): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$album->getId(), $request->request->get('_token'))) {
             $entityManager = $this->managerRegistry->getManager();
@@ -128,6 +142,7 @@ class AlbumController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'L\'album a bien été supprimé');
         }
+
         return $this->redirectToRoute('album_index');
     }
 }

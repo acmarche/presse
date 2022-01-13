@@ -46,28 +46,26 @@ class CreateuserCommand extends Command
         $name = $input->getArgument('name');
         $password = $input->getArgument('password');
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $io->error('Adresse email non valide');
 
             return 1;
         }
 
-        if (strlen($name) < 1) {
+        if (\strlen($name) < 1) {
             $io->error('Name minium 1');
 
             return 1;
         }
 
-        if (!$password) {
+        if (! $password) {
             $question = new Question("Choisissez un mot de passe: \n");
             $question->setHidden(true);
             $question->setMaxAttempts(5);
             $question->setValidator(
                 function ($password) {
-                    if (strlen($password) < 4) {
-                        throw new RuntimeException(
-                            'Le mot de passe doit faire minimum 4 caractères'
-                        );
+                    if (\strlen($password) < 4) {
+                        throw new RuntimeException('Le mot de passe doit faire minimum 4 caractères');
                     }
 
                     return $password;
@@ -76,7 +74,9 @@ class CreateuserCommand extends Command
             $password = $helper->ask($input, $output, $question);
         }
 
-        if ($this->userRepository->findOneBy(['email' => $email]) !== null) {
+        if (null !== $this->userRepository->findOneBy([
+            'email' => $email,
+        ])) {
             $io->error('Un utilisateur existe déjà avec cette adresse email');
 
             return 1;

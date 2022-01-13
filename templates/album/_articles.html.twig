@@ -1,7 +1,7 @@
 {% if articles|length > 0 %}
     <h3 class="text-success">Articles de presse</h3>
     <hr>
-    <div id="lightgallery" data-controller="gallery">
+    <div id="lightgallery" data-controller="gallery" class="d-grid g-col-2">
         {% for article in articles %}
             <div class="card" data-src="{{ vich_uploader_asset(article, 'file') }}"
                  data-sub-html="#caption{{ article.id }}">

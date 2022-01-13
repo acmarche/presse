@@ -95,7 +95,7 @@ class AlbumController extends AbstractController
         $paths = $this->albumService->getPath($album);
         $articles = $this->articleRepository->findByAlbum($album);
         $childs = $this->albumRepository->getChilds($album);
-dump($articles);
+
         return $this->render(
             '@AcMarchePresse/album/show.html.twig',
             [

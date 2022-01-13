@@ -1,12 +1,14 @@
 {% if articles|length > 0 %}
     <h3 class="text-success">Articles de presse</h3>
     <hr>
-    <div id="lightgallery" data-controller="gallery" class="d-grid g-col-2">
+    <div id="lightgallery" data-controller="gallery" class="d-grid"
+         style="grid-template-columns: repeat(2, 1fr); gap: 2rem;">
         {% for article in articles %}
-            <div class="card" data-src="{{ vich_uploader_asset(article, 'file') }}"
+            <div class="card"
+                 data-src="{{ vich_uploader_asset(article, 'file') }}"
                  data-sub-html="#caption{{ article.id }}">
                 <h3 class="card-header">{{ article.nom }}</h3>
-                <div class="card-body">
+                <div class="card-body d-flex justify-content-center">
                     <a href="{{ vich_uploader_asset(article, 'file') }}" title="{{ article.nom }}"
                        class="me-2">
                         {% if article.fileName is defined %}
@@ -19,7 +21,7 @@
                         {% endif %}
                     </a>
                 </div>
-                <div class="card-footer" id="caption{{ article.id }}">
+                <div class="card-footer">
                     {% if article.fileName is defined %}
                         <div id="caption{{ article.id }}" style="display:none">
                             <h4>{{ article.nom }}</h4>
@@ -30,4 +32,14 @@
             </div>
         {% endfor %}
     </div>
+
+    {# CAPTIONS #}
+    {% for article in articles %}
+        {% if article.fileName is defined %}
+            <div id="caption{{ article.id }}" style="display:none">
+                <h4>{{ article.nom }}</h4>
+                <p>{{ article.description }}</p>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endif %}

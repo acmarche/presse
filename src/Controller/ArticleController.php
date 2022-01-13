@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Entity\Article;
@@ -15,35 +16,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/article")
- */
+#[Route(path: '/article')]
 class ArticleController extends AbstractController
 {
-    private ArticleRepository $articleRepository;
-
-    public function __construct(ArticleRepository $articleRepository)
+    public function __construct(private ArticleRepository $articleRepository, private ManagerRegistry $managerRegistry)
     {
-        $this->articleRepository = $articleRepository;
     }
-
-    /**
-     * @Route("/", name="article_index", methods={"GET"})
-     */
-    public function index(): RedirectResponse
+    #[Route(path: '/', name: 'article_index', methods: ['GET'])]
+    public function index() : RedirectResponse
     {
         return $this->redirectToRoute('homepage');
     }
-
-    /**
-     * @Route("/new/{id}", name="article_new", methods={"GET"})
-     * @IsGranted("ROLE_PRESSE_ADMIN")
-     */
-    public function new(Album $album): Response
+    #[Route(path: '/new/{id}', name: 'article_new', methods: ['GET'])]
+    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    public function new(Album $album) : Response
     {
         $article = new Article($album);
         $article->setAlbum($album);
-
         $form = $this->createForm(
             UploadType::class,
             [],
@@ -51,7 +40,6 @@ class ArticleController extends AbstractController
                 'action' => $this->generateUrl('presse_upload', ['id' => $album->getId()]),
             ]
         );
-
         return $this->render(
             '@AcMarchePresse/article/new.html.twig',
             [
@@ -61,11 +49,8 @@ class ArticleController extends AbstractController
             ]
         );
     }
-
-    /**
-     * @Route("/{id}", name="article_show", methods={"GET"})
-     */
-    public function show(Article $article): Response
+    #[Route(path: '/{id}', name: 'article_show', methods: ['GET'])]
+    public function show(Article $article) : Response
     {
         return $this->render(
             '@AcMarchePresse/article/show.html.twig',
@@ -74,24 +59,19 @@ class ArticleController extends AbstractController
             ]
         );
     }
-
-    /**
-     * @Route("/edit/{id}", name="article_edit", methods={"GET","POST"})
-     * @IsGranted("ROLE_PRESSE_ADMIN")
-     */
-    public function edit(Request $request, Article $article): Response
+    #[Route(path: '/edit/{id}', name: 'article_edit', methods: ['GET', 'POST'])]
+    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    public function edit(Request $request, Article $article) : Response
     {
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->managerRegistry->getManager()->flush();
 
             $this->addFlash('success', 'L\' article ont été modifié');
 
             return $this->redirectToRoute('article_show', ['id' => $article->getId()]);
         }
-
         return $this->render(
             '@AcMarchePresse/article/edit.html.twig',
             [
@@ -100,22 +80,18 @@ class ArticleController extends AbstractController
             ]
         );
     }
-
-    /**
-     * @Route("/{id}", name="article_delete", methods={"DELETE"})
-     * @IsGranted("ROLE_PRESSE_ADMIN")
-     */
-    public function delete(Request $request, Article $article): RedirectResponse
+    #[Route(path: '/{id}', name: 'article_delete', methods: ['DELETE'])]
+    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    public function delete(Request $request, Article $article) : RedirectResponse
     {
         $album = $article->getAlbum();
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->managerRegistry->getManager();
 
             $entityManager->remove($article);
             $entityManager->flush();
             $this->addFlash('success', 'L\'article a bien été supprimé');
         }
-
         return $this->redirectToRoute('album_show',['id'=>$album->getId()]);
     }
 }

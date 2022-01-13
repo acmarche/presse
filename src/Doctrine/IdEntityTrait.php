@@ -12,12 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait IdEntityTrait
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private int $id;
 
     public function getId(): ?int
     {

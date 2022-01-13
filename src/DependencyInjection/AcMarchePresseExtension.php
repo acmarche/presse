@@ -64,10 +64,6 @@ class AcMarchePresseExtension extends Extension implements PrependExtensionInter
         $configs->load($name . '.yaml');
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @return Loader\YamlFileLoader
-     */
     protected function loadYamlFile(ContainerBuilder $container): YamlFileLoader
     {
         return new YamlFileLoader(

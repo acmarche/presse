@@ -18,50 +18,34 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DefaultController extends AbstractController
 {
-    private AlbumRepository $albumRepository;
-    private ArticleRepository $articleRepository;
-
-    public function __construct(AlbumRepository $albumRepository, ArticleRepository $articleRepository)
+    public function __construct(private AlbumRepository $albumRepository, private ArticleRepository $articleRepository)
     {
-        $this->albumRepository = $albumRepository;
-        $this->articleRepository = $articleRepository;
     }
 
-    /**
-     * @Route("/", name="homepage")
-     *
-     */
-    public function index(): Response
+    #[Route(path: '/', name: 'homepage')]
+    public function index() : Response
     {
         $end = new DateTime();
         $end->modify('-7 months');
         $albums = $this->albumRepository->getLasts($end);
-
         return $this->render('@AcMarchePresse/default/index.html.twig', ['albums' => $albums]);
     }
 
-    /**
-     * @Route("/search", name="presse_search", methods={"GET","POST"})
-     *
-     */
-    public function search(Request $request): Response
+    #[Route(path: '/search', name: 'presse_search', methods: ['GET', 'POST'])]
+    public function search(Request $request) : Response
     {
         $albums = $articles = $args = [];
-
         if ($t = $request->request->get('keyword')) {
             $args['keyword'] = $t;
         }
-
         $form = $this->createForm(SearchArticleType::class, $args);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = $form->getData();
             $albums = $this->albumRepository->search($data);
             $articles = $this->articleRepository->search($data);
         }
-
         return $this->render(
             '@AcMarchePresse/default/search.html.twig',
             [
@@ -72,10 +56,8 @@ class DefaultController extends AbstractController
         );
     }
 
-    /**
-     * @Route("formsearch", name="presse_form_search")
-     */
-    public function formsearch(): Response
+    #[Route(path: 'formsearch', name: 'presse_form_search')]
+    public function formsearch() : Response
     {
         $form = $this->createForm(
             SearchArticleType::class,
@@ -85,7 +67,6 @@ class DefaultController extends AbstractController
                 'action'=>$this->generateUrl('presse_search'),
             ]
         );
-
         return $this->render(
             '@AcMarchePresse/_form_search_inline.html.twig',
             [

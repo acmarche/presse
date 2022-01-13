@@ -7,16 +7,11 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 class TablePrefix
 {
-    protected string $prefix = '';
-    protected string $namespace = '';
-
-    public function __construct(string $prefix, string $namespace)
+    public function __construct(protected string $prefix, protected string $namespace)
     {
-        $this->prefix = $prefix;
-        $this->namespace = $namespace;
     }
 
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
         $classMetadata = $eventArgs->getClassMetadata();
 

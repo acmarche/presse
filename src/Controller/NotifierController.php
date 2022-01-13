@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use DateTime;
 use AcMarche\Presse\Form\NotifierType;
@@ -13,29 +14,19 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Default controller.
- *
- * @IsGranted("ROLE_PRESSE_ADMIN")
  */
+#[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
 class NotifierController extends AbstractController
 {
-
-    private ArticleRepository $articleRepository;
-
-    public function __construct(ArticleRepository $articleRepository)
+    public function __construct(private ArticleRepository $articleRepository)
     {
-        $this->articleRepository = $articleRepository;
     }
-
-    /**
-     * @Route("/notifier", name="presse_notifier", methods={"GET","POST"})
-     *
-     */
-    public function index(Request $request): RedirectResponse
+    #[Route(path: '/notifier', name: 'presse_notifier', methods: ['GET', 'POST'])]
+    public function index(Request $request) : RedirectResponse|Response
     {
         $date = new DateTime();
         $form = $this->createForm(NotifierType::class, ['date'=>$date]);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $articles = $this->articleRepository->getByDate($date);
             if (count($articles) == 0) {
@@ -46,8 +37,6 @@ class NotifierController extends AbstractController
 
             return $this->redirectToRoute('presse_notifier');
         }
-
         return $this->render('@AcMarchePresse/default/notifier.html.twig', ['form' => $form->createView()]);
     }
-
 }

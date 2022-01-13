@@ -19,19 +19,12 @@ class CreateuserCommand extends Command
 {
     protected static $defaultName = 'presse:create-user';
 
-    private UserRepository $userRepository;
-    private UserPasswordHasherInterface $userPasswordEncoder;
-    private EntityManagerInterface $entityManager;
-
     public function __construct(
-        UserRepository $userRepository,
-        UserPasswordHasherInterface $userPasswordEncoder,
-        EntityManagerInterface $entityManager
+        private UserRepository $userRepository,
+        private UserPasswordHasherInterface $userPasswordEncoder,
+        private EntityManagerInterface $entityManager
     ) {
         parent::__construct();
-        $this->userPasswordEncoder = $userPasswordEncoder;
-        $this->entityManager = $entityManager;
-        $this->userRepository = $userRepository;
     }
 
     protected function configure(): void
@@ -43,7 +36,7 @@ class CreateuserCommand extends Command
             ->addArgument('password', InputArgument::OPTIONAL, 'Password');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
@@ -107,6 +100,6 @@ class CreateuserCommand extends Command
 
         $io->success("L'utilisateur a bien été créé");
 
-        return null;
+        return 0;
     }
 }

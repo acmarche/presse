@@ -3,7 +3,6 @@ doctrine:
     mappings:
       AcMarche\Presse:
         is_bundle: false
-        type: annotation
         dir: '%kernel.project_dir%/src/AcMarche/Presse/src/Entity'
         prefix: 'AcMarche\Presse'
         alias: AcMarche\Presse

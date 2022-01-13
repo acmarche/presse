@@ -11,31 +11,16 @@ namespace AcMarche\Presse\Service;
 
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Repository\AlbumRepository;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
-use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
-use Vich\UploaderBundle\Storage\StorageInterface;
 
 class AlbumService
 {
 
-    private AlbumRepository $albumRepository;
-    private PropertyMappingFactory $propertyMappingFactory;
-    private Filesystem $storage;
-
-
-    public function __construct(
-        AlbumRepository $albumRepository,
-        PropertyMappingFactory $propertyMappingFactory,
-        Filesystem $storage
-    ) {
-        $this->albumRepository = $albumRepository;
-        $this->propertyMappingFactory = $propertyMappingFactory;
-        $this->storage = $storage;
+    public function __construct(private AlbumRepository $albumRepository, private Filesystem $storage)
+    {
     }
 
     /**
-     * @param Album $album
      * @return Album[]
      *
      * donne vetement enfant
@@ -74,18 +59,4 @@ class AlbumService
 
         return implode(DIRECTORY_SEPARATOR, $paths);
     }
-
-    /**
-     * @param Album $album
-     * @throws IOException On any directory creation failure
-     */
-    public function createFolder(Album $album): void
-    {
-        $mappings = $this->propertyMappingFactory->fromObject($album);
-        $mapping = $mappings[0];
-        $path = $mapping->getUploadDestination();
-        $directory = $path.DIRECTORY_SEPARATOR.self::getDirectory($album);
-        $this->storage->mkdir($directory);
-    }
-
 }

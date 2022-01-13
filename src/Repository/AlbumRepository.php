@@ -2,12 +2,9 @@
 
 namespace AcMarche\Presse\Repository;
 
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
 use AcMarche\Presse\Entity\Album;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Album|null find($id, $lockMode = null, $lockVersion = null)
@@ -38,9 +35,8 @@ class AlbumRepository extends ServiceEntityRepository
 
     /**
      * @return Album[] Returns an array of Album objects
-     * @param DateTime|DateTimeImmutable $date
      */
-    public function getLasts(DateTimeInterface $date)
+    public function getLasts(\DateTime|\DateTimeImmutable $date)
     {
         return $this->createQueryBuilder('album')
             ->andWhere('album.parent IS NULL')

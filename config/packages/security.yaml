@@ -1,5 +1,5 @@
 security:
-  encoders:
+  password_hashers:
     AcMarche\Presse\Entity\User:
       algorithm: auto
 

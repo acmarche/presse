@@ -1,51 +1,33 @@
 {% if articles|length > 0 %}
     <h3 class="text-success">Articles de presse</h3>
     <hr>
-
     <div id="lightgallery" data-controller="gallery">
-        {% for row in articles|batch(2, {}) %}
-            <div class="card-deck">
-                {% for article in row %}
+        {% for article in articles %}
+            <div class="card" data-src="{{ vich_uploader_asset(article, 'file') }}"
+                 data-sub-html="#caption{{ article.id }}">
+                <h3 class="card-header">{{ article.nom }}</h3>
+                <div class="card-body">
+                    <a href="{{ vich_uploader_asset(article, 'file') }}" title="{{ article.nom }}"
+                       class="me-2">
+                        {% if article.fileName is defined %}
+                            <img src="{{ vich_uploader_asset(article, 'file')| imagine_filter('miniature') }}" alt="img"
+                                 class="img-thumbnail mb-2 ">
+                        {% else %}
+                            <a href="{{ vich_uploader_asset(article, 'file') }}" class="card-link">
+                                <i class="fas fa-download"></i> Télécharger</a>
+                            <span class="text-muted">({{ article.mime }})</span>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="card-footer" id="caption{{ article.id }}">
                     {% if article.fileName is defined %}
-                        <div class="card bg-light mb-3" data-sub-html="#caption{{ article.id }}"
-                             data-src="{{ vich_uploader_asset(article, 'file') }}">
-                            <div class="card-header">
-                                <h5 class="card-title ">
-                                    <a href="{{ path('article_show', {'id': article.id}) }}"
-                                       class="card-link">{{ article.nom }}</a>
-                                </h5>
-                            </div>
-                            {% if 'image' in article.mime %}
-                                <div class="card-body card-jf" data-sub-html="#caption{{ article.id }}"
-                                     data-src="{{ vich_uploader_asset(article, 'file') }}">
-                                    <a href="{{ vich_uploader_asset(article, 'file') }}" class="card-link">
-                                        <img src="{{ vich_uploader_asset(article, 'file') | imagine_filter('miniature') }}"
-                                             title="{{ article.nom }}" alt="{{ article.dateArticle|date('y-m-d') }}"
-                                             class="img-thumbnail"/>
-                                    </a>
-                                </div>
-
-                            {% else %}
-                                <div class="card-body">
-                                    <a href="{{ vich_uploader_asset(article, 'file') }}" class="card-link">
-                                        <i class="fas fa-download"></i> Télécharger</a>
-                                    <span class="text-muted">({{ article.mime }})</span>
-                                </div>
-                            {% endif %}
+                        <div id="caption{{ article.id }}" style="display:none">
+                            <h4>{{ article.nom }}</h4>
+                            <p>{{ article.description }}</p>
                         </div>
                     {% endif %}
-                {% endfor %}
+                </div>
             </div>
         {% endfor %}
     </div>
-
-    {# CAPTIONS #}
-    {% for article in articles %}
-        {% if article.fileName is defined %}
-            <div id="caption{{ article.id }}" style="display:none">
-                <h4>{{ article.nom }}</h4>
-                <p>{{ article.description }}</p>
-            </div>
-        {% endif %}
-    {% endfor %}
 {% endif %}

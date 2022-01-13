@@ -1,16 +1,17 @@
-{% if is_granted('ROLE_PRESSE_ADMIN') %}
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-           data-bs-toggle="dropdown" aria-expanded="false">
-            Paramètres
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{{ path('presse_notifier') }}">Notifier</a>
-            <a class="dropdown-item" href="{{ path('presse_destinataire_index') }}">Les destinataires</a>
-            <a class="dropdown-item" href="{{ path('presse_user_index') }}">Les utilisateurs</a>
-        </div>
-    </li>
-{% endif %}
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    {% if is_granted('ROLE_PRESSE_ADMIN') %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+                Paramètres...
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="{{ path('presse_notifier') }}">Notifier</a></li>
+                <li><a class="dropdown-item" href="{{ path('presse_destinataire_index') }}">Les destinataires</a></li>
+                <li><a class="dropdown-item" href="{{ path('presse_user_index') }}">Les utilisateurs</a></li>
+            </ul>
+        </li>
+    {% endif %}
     {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
         <li class="nav-item">
             <a href="{{ path('app_login') }}" class="nav-link"><i class="fas fa-sign-in-alt"></i>
@@ -21,3 +22,4 @@
                 Déconnexion</a>
         </li>
     {% endif %}
+</ul>

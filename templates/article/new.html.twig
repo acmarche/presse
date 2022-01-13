@@ -1,9 +1,5 @@
 {% extends '@AcMarchePresse/base.html.twig' %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/acmarchepresse/css/dropzone.css') }}">
-{% endblock %}
-
 {% block body %}
 
     <div class="card bg-light mb-3">
@@ -20,17 +16,4 @@
     <a href="{{ path('album_show',{'id': album.id}) }}"><i
                 class="fas fa-arrow-left"></i> Annuler</a>
 
-{% endblock %}
-{% block javascripts %}
-    <script src="{{ asset('bundles/acmarchepresse/js/dropzone.js') }}"></script>
-    <script type="text/javascript">
-        Dropzone.options.formdrop = {
-            dictDefaultMessage: "Glissez ici vos images ou cliquez sur cette zone pour ajouter des photos",
-            init: function () {
-                this.on("addedfile", function (file) {
-                    console.log("finished");
-                });
-            }
-        };
-    </script>
 {% endblock %}

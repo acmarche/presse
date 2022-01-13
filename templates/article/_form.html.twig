@@ -1,8 +1,6 @@
-{{ form_start(form, {'attr':{'class': 'dropzone jumbotron'}}) }}
-{{ form_errors(form) }}
 
-<div class="dz-message d-flex flex-column">
-    <i class="fas fa-cloud-upload-alt">Charger les articles</i>
 
-</div>
-{{ form_end(form) }}
+{{ form_start(form, { 'attr': {'id': 'formdrop','class': 'mt-3 dropzone', 'data-controller': 'dropzone'}}) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}

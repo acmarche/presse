@@ -37,12 +37,12 @@ class Album implements TimestampableInterface, Stringable
     private ?DateTimeInterface $date_album = null;
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
-    #[ORM\ManyToOne(targetEntity: \AcMarche\Presse\Entity\Album::class, inversedBy: 'albums')]
+    #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'albums')]
     private ?Album $parent = null;
-    #[ORM\OneToMany(targetEntity: \AcMarche\Presse\Entity\Album::class, mappedBy: 'parent', cascade: ['remove'])]
-    private Collection $albums;
+    #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'parent', cascade: ['remove'])]
+    private iterable|Collection $albums;
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'album', cascade: ['remove'], orphanRemoval: true)]
-    private Collection $articles;
+    private iterable|Collection $articles;
     /**
      * NOTE: This is not a mapped field of entity metadata, just a simple property.
      *
@@ -144,7 +144,7 @@ class Album implements TimestampableInterface, Stringable
 
         return $this;
     }
-    public function getParent(): ?\AcMarche\Presse\Entity\Album
+    public function getParent(): ?Album
     {
         return $this->parent;
     }
@@ -157,7 +157,7 @@ class Album implements TimestampableInterface, Stringable
     /**
      * @return Collection|Album[]
      */
-    public function getAlbums(): ArrayCollection
+    public function getAlbums(): iterable|ArrayCollection
     {
         return $this->albums;
     }
@@ -185,7 +185,7 @@ class Album implements TimestampableInterface, Stringable
     /**
      * @return Collection|Article[]
      */
-    public function getArticles(): ArrayCollection
+    public function getArticles(): iterable|ArrayCollection
     {
         return $this->articles;
     }

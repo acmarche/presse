@@ -6,10 +6,7 @@ use Doctrine\ORM\EntityManager;
 
 trait OrmCrudTrait
 {
-    /**
-     * @var EntityManager
-     */
-    protected $_em;
+    protected EntityManager $_em;
 
     public function insert(object $object): void
     {

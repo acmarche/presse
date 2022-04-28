@@ -12,7 +12,7 @@
                     {% if article.fileName is defined %}
                         <a href="{{ vich_uploader_asset(article, 'file') }}" title="{{ article.nom }}"
                            class="me-2">
-                            {% if 'image' in artile.mime %}
+                            {% if 'image' in article.mime %}
                                 <img src="{{ vich_uploader_asset(article, 'file')| imagine_filter('miniature') }}"
                                      alt="img"
                                      class="img-thumbnail mb-2 ">

@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class AcMarchePresseExtension extends Extension implements PrependExtensionInterface
+class AcMarchePresseExtension
 {
     /**
      * {@inheritdoc}

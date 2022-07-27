@@ -1,4 +1,0 @@
-twig:
-  form_themes: ['bootstrap_5_layout.html.twig']
-  paths:
-    '%kernel.project_dir%/src/AcMarche/Presse/templates': AcMarchePresse

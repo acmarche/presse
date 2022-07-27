@@ -1,3 +1,0 @@
-controllers:
-    resource: ../../src/AcMarche/Presse/src/Controller/
-    type: attribute

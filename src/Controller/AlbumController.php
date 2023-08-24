@@ -42,10 +42,11 @@ class AlbumController extends AbstractController
     #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function new(Request $request, ?Album $parent = null): Response
     {
-        $album = new Album(new DateTime('first day of this month'));
-
-        if (null !== $parent) {
+        if ($parent) {
+            $album = new Album(new DateTime());
             $album->setParent($parent);
+        } else {
+            $album = new Album(new DateTime('first day of this month'));
         }
 
         $form = $this->createForm(AlbumType::class, $album);

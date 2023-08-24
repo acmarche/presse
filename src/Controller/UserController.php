@@ -6,23 +6,21 @@ use AcMarche\Presse\Entity\User;
 use AcMarche\Presse\Form\UserEditType;
 use AcMarche\Presse\Form\UserType;
 use AcMarche\Presse\Repository\UserRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/user')]
-#[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+#[IsGranted('ROLE_PRESSE_ADMIN')]
 class UserController extends AbstractController
 {
     public function __construct(
         private UserPasswordHasherInterface $userPasswordEncoder,
         private UserRepository $userRepository,
-        private ManagerRegistry $managerRegistry
     ) {
     }
 
@@ -44,12 +42,12 @@ class UserController extends AbstractController
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->managerRegistry->getManager();
+
             $user->setPassword(
                 $this->userPasswordEncoder->hashPassword($user, $user->getPassword())
             );
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $this->userRepository->persist($user);
+            $this->userRepository->flush();
             $this->addFlash('success', 'Le user a bien été ajouté');
 
             return $this->redirectToRoute('presse_user_index');
@@ -81,7 +79,7 @@ class UserController extends AbstractController
         $form = $this->createForm(UserEditType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->managerRegistry->getManager()->flush();
+            $this->userRepository->flush();
             $this->addFlash('success', 'Le user a bien été modifié');
 
             return $this->redirectToRoute('presse_user_index');
@@ -100,9 +98,8 @@ class UserController extends AbstractController
     public function delete(Request $request, User $user): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->managerRegistry->getManager();
-            $entityManager->remove($user);
-            $entityManager->flush();
+            $this->userRepository->remove($user);
+            $this->userRepository->flush();
             $this->addFlash('success', 'Le user a bien été supprimé');
         }
 

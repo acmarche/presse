@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Repository;
 
+use AcMarche\Presse\Doctrine\OrmCrudTrait;
 use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -15,6 +16,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ArticleRepository extends ServiceEntityRepository
 {
+    use OrmCrudTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Article::class);

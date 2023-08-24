@@ -6,28 +6,21 @@ use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Form\ArticlesEditType;
 use AcMarche\Presse\Repository\ArticleRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Vich\UploaderBundle\Handler\UploadHandler;
 
-/**
- * Default controller.
- */
-#[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+#[IsGranted('ROLE_PRESSE_ADMIN')]
 class UploadController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private UploadHandler $uploadHandler,
         private ArticleRepository $articleRepository,
-        private ManagerRegistry $managerRegistry
     ) {
     }
 
@@ -52,8 +45,8 @@ class UploadController extends AbstractController
                 'error' => $exception->getMessage(),
             ]);
         }
-        $this->entityManager->persist($article);
-        $this->entityManager->flush();
+        $this->articleRepository->persist($article);
+        $this->articleRepository->flush();
 
         return $this->render('@AcMarchePresse/upload/_response_ok.html.twig');
     }
@@ -74,7 +67,7 @@ class UploadController extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->managerRegistry->getManager()->flush();
+            $this->articleRepository->flush();
 
             $this->addFlash('success', 'Les articles ont été sauvegardés');
 

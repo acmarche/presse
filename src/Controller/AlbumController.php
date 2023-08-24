@@ -8,15 +8,13 @@ use AcMarche\Presse\Repository\AlbumRepository;
 use AcMarche\Presse\Repository\ArticleRepository;
 use AcMarche\Presse\Service\AlbumService;
 use DateTime;
-use Doctrine\Persistence\ManagerRegistry;
-use Exception;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/album')]
 class AlbumController extends AbstractController
@@ -25,7 +23,6 @@ class AlbumController extends AbstractController
         private AlbumRepository $albumRepository,
         private AlbumService $albumService,
         private ArticleRepository $articleRepository,
-        private ManagerRegistry $managerRegistry
     ) {
     }
 
@@ -40,30 +37,27 @@ class AlbumController extends AbstractController
         );
     }
 
-    /**
-     * @throws Exception
-     */
     #[Route(path: '/new', name: 'album_new', methods: ['GET', 'POST'])]
     #[Route(path: '/new/{id}', name: 'album_add_child', methods: ['GET', 'POST'])]
-    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function new(Request $request, ?Album $parent = null): Response
     {
-        $album = new Album();
-        $today = new DateTime();
-        $album->setDateAlbum($today);
+        $album = new Album(new DateTime('first day of this month'));
+
         if (null !== $parent) {
             $album->setParent($parent);
-        } else {
-            $album->setDateAlbum(new DateTime('first day of this month'));
         }
+
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->managerRegistry->getManager();
-            $album->setDirectoryName(AlbumService::getDirectory($album));
 
-            $entityManager->persist($album);
-            $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->albumRepository->persist($album);
+            $this->albumRepository->flush();
+
+            $album->setDirectoryName(AlbumService::getDirectory($album));
+            $this->albumRepository->flush();
 
             if (null === $album->getImage()) {
                 try {
@@ -108,13 +102,13 @@ class AlbumController extends AbstractController
     }
 
     #[Route(path: '/{id}/edit', name: 'album_edit', methods: ['GET', 'POST'])]
-    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function edit(Request $request, Album $album): Response
     {
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->managerRegistry->getManager()->flush();
+            $this->albumRepository->flush();
 
             $this->addFlash('success', 'L\'album a bien été modifié');
 
@@ -133,13 +127,12 @@ class AlbumController extends AbstractController
     }
 
     #[Route(path: '/{id}', name: 'album_delete', methods: ['DELETE'])]
-    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function delete(Request $request, Album $album): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$album->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->managerRegistry->getManager();
-            $entityManager->remove($album);
-            $entityManager->flush();
+            $this->albumRepository->remove($album);
+            $this->albumRepository->flush();
             $this->addFlash('success', 'L\'album a bien été supprimé');
         }
 

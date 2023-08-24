@@ -5,21 +5,19 @@ namespace AcMarche\Presse\Controller;
 use AcMarche\Presse\Entity\Destinataire;
 use AcMarche\Presse\Form\DestinataireType;
 use AcMarche\Presse\Repository\DestinataireRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/destinataire')]
-#[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+#[IsGranted('ROLE_PRESSE_ADMIN')]
 class DestinataireController extends AbstractController
 {
     public function __construct(
         private DestinataireRepository $destinataireRepository,
-        private ManagerRegistry $managerRegistry
     ) {
     }
 
@@ -41,9 +39,8 @@ class DestinataireController extends AbstractController
         $form = $this->createForm(DestinataireType::class, $destinataire);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->managerRegistry->getManager();
-            $entityManager->persist($destinataire);
-            $entityManager->flush();
+            $this->destinataireRepository->persist($destinataire);
+            $this->destinataireRepository->flush();
             $this->addFlash('success', 'Le destinataire a bien été ajouté');
 
             return $this->redirectToRoute('presse_destinataire_index');
@@ -75,7 +72,7 @@ class DestinataireController extends AbstractController
         $form = $this->createForm(DestinataireType::class, $destinataire);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->managerRegistry->getManager()->flush();
+            $this->destinataireRepository->flush();
             $this->addFlash('success', 'Le destinataire a bien été modifié');
 
             return $this->redirectToRoute('presse_destinataire_show', [
@@ -96,9 +93,8 @@ class DestinataireController extends AbstractController
     public function delete(Request $request, Destinataire $destinataire): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$destinataire->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->managerRegistry->getManager();
-            $entityManager->remove($destinataire);
-            $entityManager->flush();
+            $this->destinataireRepository->remove($destinataire);
+            $this->destinataireRepository->flush();
             $this->addFlash('success', 'Le destinataire a bien été supprimé');
         }
 

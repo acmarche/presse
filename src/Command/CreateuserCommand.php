@@ -4,8 +4,8 @@ namespace AcMarche\Presse\Command;
 
 use AcMarche\Presse\Entity\User;
 use AcMarche\Presse\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,14 +15,15 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+#[AsCommand(
+    name: 'presse:create-user',
+    description: 'Add a short description for your command',
+)]
 class CreateuserCommand extends Command
 {
-    protected static $defaultName = 'presse:create-user';
-
     public function __construct(
         private UserRepository $userRepository,
         private UserPasswordHasherInterface $userPasswordEncoder,
-        private EntityManagerInterface $entityManager
     ) {
         parent::__construct();
     }
@@ -30,7 +31,6 @@ class CreateuserCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Création d\'un utilisateur')
             ->addArgument('name', InputArgument::REQUIRED, 'Name')
             ->addArgument('email', InputArgument::REQUIRED, 'Email')
             ->addArgument('password', InputArgument::OPTIONAL, 'Password');
@@ -46,7 +46,7 @@ class CreateuserCommand extends Command
         $name = $input->getArgument('name');
         $password = $input->getArgument('password');
 
-        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $io->error('Adresse email non valide');
 
             return 1;
@@ -58,7 +58,7 @@ class CreateuserCommand extends Command
             return 1;
         }
 
-        if (! $password) {
+        if (!$password) {
             $question = new Question("Choisissez un mot de passe: \n");
             $question->setHidden(true);
             $question->setMaxAttempts(5);
@@ -75,8 +75,8 @@ class CreateuserCommand extends Command
         }
 
         if (null !== $this->userRepository->findOneBy([
-            'email' => $email,
-        ])) {
+                'email' => $email,
+            ])) {
             $io->error('Un utilisateur existe déjà avec cette adresse email');
 
             return 1;
@@ -95,8 +95,8 @@ class CreateuserCommand extends Command
             $user->addRole($role);
         }
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->userRepository->persist($user);
+        $this->userRepository->flush();
 
         $io->success("L'utilisateur a bien été créé");
 

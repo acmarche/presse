@@ -19,36 +19,28 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * ORM\Table(uniqueConstraints={
- *     ORM\UniqueConstraint(columns={"parent_id","date_album"})
- * }).
- *
- * @Vich\Uploadable
- */
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 #[UniqueEntity(fields: ['parent', 'date_album'], message: 'Un album a déjà cette date')]
 class Album implements TimestampableInterface, Stringable
 {
     use TimestampableTrait;
     use IdEntityTrait;
+
     #[ORM\Column(type: 'string', length: 80, nullable: true)]
     private ?string $nom = null;
     #[ORM\Column(type: 'date')]
-    private ?DateTimeInterface $date_album = null;
+    public ?DateTimeInterface $date_album = null;
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'albums')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'albums', cascade: ['persist'])]
     private ?Album $parent = null;
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['remove'])]
     private iterable|Collection $albums;
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'album', cascade: ['remove'], orphanRemoval: true)]
     private iterable|Collection $articles;
-    /**
-     * NOTE: This is not a mapped field of entity metadata, just a simple property.
-     *
-     * @Vich\UploadableField(mapping="album_image", fileNameProperty="imageName", size="imageSize")
-     */
+
+    #[Vich\UploadableField(mapping: 'album_image', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $image = null;
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $imageName = null;
@@ -57,12 +49,13 @@ class Album implements TimestampableInterface, Stringable
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $directoryName = null;
 
-    public function __construct()
+    public function __construct(DateTimeInterface $date_album)
     {
         $this->createdAt = new DateTime();
         $this->updatedAt = new DateTime();
         $this->albums = new ArrayCollection();
         $this->articles = new ArrayCollection();
+        $this->date_album = $date_album;
     }
 
     public function __toString(): string
@@ -71,13 +64,21 @@ class Album implements TimestampableInterface, Stringable
             return $this->nom;
         }
 
-        return $this->date_album->format('d-m-Y');
+        if ($this->date_album) {
+            return $this->date_album->format('d-m-Y');
+        } else {
+            return 'no name';
+        }
     }
 
     public function niceName(): string
     {
         if ($this->nom) {
             return $this->nom;
+        }
+
+        if (!$this->date_album) {
+            return 'no date';
         }
 
         if (null === $this->getParent()) {
@@ -179,7 +180,7 @@ class Album implements TimestampableInterface, Stringable
 
     public function addAlbum(self $album): self
     {
-        if (! $this->albums->contains($album)) {
+        if (!$this->albums->contains($album)) {
             $this->albums[] = $album;
             $album->setParent($this);
         }
@@ -210,7 +211,7 @@ class Album implements TimestampableInterface, Stringable
 
     public function addArticle(Article $article): self
     {
-        if (! $this->articles->contains($article)) {
+        if (!$this->articles->contains($article)) {
             $this->articles[] = $article;
             $article->setAlbum($this);
         }

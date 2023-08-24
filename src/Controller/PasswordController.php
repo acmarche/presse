@@ -4,20 +4,20 @@ namespace AcMarche\Presse\Controller;
 
 use AcMarche\Presse\Entity\User;
 use AcMarche\Presse\Form\UserPasswordType;
-use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use AcMarche\Presse\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/password')]
-#[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+#[IsGranted('ROLE_PRESSE_ADMIN')]
 class PasswordController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private UserRepository $userRepository,
         private UserPasswordHasherInterface $userPasswordEncoder
     ) {
     }
@@ -31,7 +31,7 @@ class PasswordController extends AbstractController
             $data = $form->getData();
             $password = $data->getPassword();
             $user->setPassword($this->userPasswordEncoder->hashPassword($user, $password));
-            $this->entityManager->flush();
+            $this->userRepository->flush();
 
             return $this->redirectToRoute(
                 'presse_user_show',

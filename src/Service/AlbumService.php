@@ -51,7 +51,11 @@ class AlbumService
         $parent = $album->getParent();
         $paths = [];
         if (null !== $parent) {
-            $paths[] = $parent->getDateAlbum()->format('Y-m-d');
+            if ($parent->getDateAlbum()) {
+                $paths[] = $parent->getDateAlbum()->format('Y-m-d');
+            } else {
+                $paths[] = $parent->getNom();
+            }
         }
 
         $paths[] = $album->getDateAlbum()->format('Y-m-d');

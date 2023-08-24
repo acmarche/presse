@@ -18,7 +18,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ->autoconfigure();
 
     $services->load('AcMarche\Presse\\', __DIR__.'/../src/*')
-        ->exclude([__DIR__.'/../src/{Entities,Tests}']);
+        ->exclude([__DIR__.'/../src/{Entity,Tests}']);
 
     $services->set(AlbumDirectoryNamer::class)
         ->public();

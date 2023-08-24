@@ -16,18 +16,13 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @Vich\Uploadable
- */
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article implements TimestampableInterface, Stringable
 {
     use IdEntityTrait;
     use TimestampableTrait;
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private int $id;
+
     #[ORM\Column(type: 'string', length: 200)]
     private ?string $nom = null;
     #[ORM\Column(type: 'string', length: 80)]
@@ -36,27 +31,27 @@ class Article implements TimestampableInterface, Stringable
     private ?string $description = null;
     #[ORM\Column(type: 'date', nullable: false)]
     private ?DateTimeInterface $dateArticle = null;
-    /**
-     * NOTE: This is not a mapped field of entity metadata, just a simple property.
-     *
-     * @Vich\UploadableField(mapping="article_file", fileNameProperty="fileName", size="fileSize")
-     */
+
+    #[Vich\UploadableField(mapping: 'article_file', fileNameProperty: 'fileName', size: 'fileSize')]
     private ?File $file = null;
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $fileName = null;
     #[ORM\Column(type: 'integer')]
     private ?int $fileSize = null;
 
-    public function __construct(
-        #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'articles')] #[ORM\JoinColumn(nullable: false)] private ?Album $album
-    ) {
+    #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)] private ?Album $album;
+
+    public function __construct(?Album $album)
+    {
         $this->createdAt = new DateTime();
         $this->updatedAt = new DateTime();
+        $this->album = $album;
     }
 
     public function __toString(): string
     {
-        return (string) $this->nom;
+        return (string)$this->nom;
     }
 
     /**

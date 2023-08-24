@@ -7,20 +7,18 @@ use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Form\ArticleType;
 use AcMarche\Presse\Form\UploadType;
 use AcMarche\Presse\Repository\ArticleRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/article')]
 class ArticleController extends AbstractController
 {
     public function __construct(
         private ArticleRepository $articleRepository,
-        private ManagerRegistry $managerRegistry
     ) {
     }
 
@@ -31,7 +29,7 @@ class ArticleController extends AbstractController
     }
 
     #[Route(path: '/new/{id}', name: 'article_new', methods: ['GET'])]
-    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function new(Album $album): Response
     {
         $article = new Article($album);
@@ -68,13 +66,13 @@ class ArticleController extends AbstractController
     }
 
     #[Route(path: '/edit/{id}', name: 'article_edit', methods: ['GET', 'POST'])]
-    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function edit(Request $request, Article $article): Response
     {
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->managerRegistry->getManager()->flush();
+            $this->articleRepository->flush();
 
             $this->addFlash('success', 'L\' article ont été modifié');
 
@@ -93,15 +91,14 @@ class ArticleController extends AbstractController
     }
 
     #[Route(path: '/{id}', name: 'article_delete', methods: ['DELETE'])]
-    #[IsGranted(data: 'ROLE_PRESSE_ADMIN')]
+    #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function delete(Request $request, Article $article): RedirectResponse
     {
         $album = $article->getAlbum();
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->managerRegistry->getManager();
 
-            $entityManager->remove($article);
-            $entityManager->flush();
+            $this->articleRepository->remove($article);
+            $this->articleRepository->flush();
             $this->addFlash('success', 'L\'article a bien été supprimé');
         }
 

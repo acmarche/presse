@@ -2,6 +2,7 @@
 
 namespace AcMarche\Presse\Entity;
 
+use AcMarche\Presse\Doctrine\IdEntityTrait;
 use AcMarche\Presse\Repository\DestinataireRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Stringable;
@@ -9,10 +10,8 @@ use Stringable;
 #[ORM\Entity(repositoryClass: DestinataireRepository::class)]
 class Destinataire implements Stringable
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    use IdEntityTrait;
+
     #[ORM\Column(type: 'string', length: 100)]
     private ?string $nom = null;
     #[ORM\Column(type: 'string', length: 100, nullable: true)]

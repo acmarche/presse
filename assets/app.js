@@ -1,3 +1,6 @@
+// start the Stimulus application
+import './bootstrap';
+
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -8,10 +11,8 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
 
-// start the Stimulus application
-import './bootstrap';
-
 import 'bootstrap';
+import '@popperjs/core';
 
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';

@@ -26,9 +26,10 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[]
      */
-    public function getByDate(\DateTime|\DateTimeImmutable $dateTime)
+    public function getByDate(\DateTime|\DateTimeImmutable $dateTime): array
     {
-        return $this->createQueryBuilder('article')
+        return $this
+            ->createQueryBuilder('article')
             ->andWhere('article.dateArticle = :date')
             ->setParameter('date', $dateTime->format('Y-m-d'))
             ->orderBy('article.id', 'ASC')
@@ -39,9 +40,10 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[]
      */
-    public function findByAlbum(Album $album)
+    public function findByAlbum(Album $album): array
     {
-        return $this->createQueryBuilder('article')
+        return $this
+            ->createQueryBuilder('article')
             ->andWhere('article.album = :album')
             ->setParameter('album', $album)
             ->orderBy('article.dateArticle', 'ASC')
@@ -49,15 +51,33 @@ class ArticleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function search($data)
+    /**
+     * @return Article[]
+     */
+    public function search($data): array
     {
         $mot = $data['keyword'] ?? null;
 
-        return $this->createQueryBuilder('article')
+        return $this
+            ->createQueryBuilder('article')
             ->andWhere('article.nom LIKE :mot OR article.description LIKE :mot')
             ->setParameter('mot', '%'.$mot.'%')
             ->orderBy('article.dateArticle', 'ASC')
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return Article[]
+     */
+    public function findByYear(int $year): array
+    {
+        return $this
+            ->createQueryBuilder('article')
+            ->andWhere('article.dateArticle LIKE :year')
+            ->setParameter('year', $year.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
 }

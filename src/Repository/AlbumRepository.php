@@ -23,9 +23,9 @@ class AlbumRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Album[] Returns an array of Album objects
+     * @return Album[]
      */
-    public function getRoots()
+    public function getRoots():array
     {
         return $this->createQueryBuilder('album')
             ->leftJoin('album.albums', 'childs')
@@ -37,9 +37,9 @@ class AlbumRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Album[] Returns an array of Album objects
+     * @return Album[]
      */
-    public function getLasts(\DateTime|\DateTimeImmutable $date)
+    public function getLasts(\DateTime|\DateTimeImmutable $date):array
     {
         return $this->createQueryBuilder('album')
             ->andWhere('album.parent IS NULL')
@@ -50,7 +50,10 @@ class AlbumRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getChilds(Album $album)
+    /**
+     * @return Album[]
+     */
+    public function getChilds(Album $album):array
     {
         return $this->createQueryBuilder('album')
             ->andWhere('album.parent = :parent')
@@ -60,7 +63,11 @@ class AlbumRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function search($data)
+    /**
+     * @param $data
+     * @return Album[]
+     */
+    public function search($data):array
     {
         $mot = $data['keyword'] ?? null;
 
@@ -71,4 +78,7 @@ class AlbumRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getByYear(mixed $year) {}
+
 }

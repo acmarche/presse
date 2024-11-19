@@ -19,8 +19,7 @@ class ArticleController extends AbstractController
 {
     public function __construct(
         private ArticleRepository $articleRepository,
-    ) {
-    }
+    ) {}
 
     #[Route(path: '/', name: 'article_index', methods: ['GET'])]
     public function index(): RedirectResponse
@@ -41,7 +40,7 @@ class ArticleController extends AbstractController
                 'action' => $this->generateUrl('presse_upload', [
                     'id' => $album->getId(),
                 ]),
-            ]
+            ],
         );
 
         return $this->render(
@@ -50,7 +49,7 @@ class ArticleController extends AbstractController
                 'article' => $article,
                 'album' => $album,
                 'form' => $form->createView(),
-            ]
+            ],
         );
     }
 
@@ -61,7 +60,7 @@ class ArticleController extends AbstractController
             '@AcMarchePresse/article/show.html.twig',
             [
                 'article' => $article,
-            ]
+            ],
         );
     }
 
@@ -86,7 +85,7 @@ class ArticleController extends AbstractController
             [
                 'article' => $article,
                 'form' => $form->createView(),
-            ]
+            ],
         );
     }
 
@@ -96,7 +95,6 @@ class ArticleController extends AbstractController
     {
         $album = $article->getAlbum();
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-
             $this->articleRepository->remove($article);
             $this->articleRepository->flush();
             $this->addFlash('success', 'L\'article a bien été supprimé');

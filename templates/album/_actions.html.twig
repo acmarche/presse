@@ -1,20 +1,20 @@
-<a href="{{ path('album_index') }}" class="btn btn-primary" role='button'><i class="fas fa-list"></i>
+<a href="{{ path('album_index') }}" class="btn btn-primary" role='button'><i class="ti ti-list"></i>
     Retour à la liste
 </a>
 {% if is_granted('ROLE_PRESSE_ADMIN') %}
     <a href="{{ path('article_new', { 'id': album.id }) }}" role="button"
-       class="btn btn-primary"><i class="fas fa-plus"></i> Ajouter des articles</a>
+       class="btn btn-primary"><i class="ti ti-plus"></i> Ajouter des articles</a>
 
     {% if album.parent is null %}
         <a href="{{ path('album_add_child', { 'id': album.id }) }}" role="button"
-           class="btn btn-primary"><i class="fas fa-plus"></i> Ajouter un sous album</a>
+           class="btn btn-primary"><i class="ti ti-plus"></i> Ajouter un sous album</a>
     {% endif %}
 
     <a href="{{ path('album_edit', { 'id': album.id }) }}" role="button"
        class="btn btn-primary"><i class="far fa-edit"></i> Editer</a>
 
     <button class="btn btn-danger" role='button' data-toggle="modal" data-target="#deleteModal"><i
-                class="fas fa-trash"></i>
+                class="ti ti-trash"></i>
         Supprimer
     </button>
 {% endif %}

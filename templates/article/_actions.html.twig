@@ -1,10 +1,10 @@
 <a href="{{ path('album_show',{'id':article.album.id}) }}" class="btn btn-primary" role='button'><i
-            class="fas fa-list"></i>
+            class="ti ti-list"></i>
     Retour à l'album
 </a>
 
 <a href="{{ path('article_download',{'id':article.id}) }}" class="btn btn-primary" role='button'>
-    <i class="fas fa-download"></i> Télécharger
+    <i class="ti ti-download"></i> Télécharger
 </a>
 
 {% if is_granted('ROLE_PRESSE_ADMIN') %}
@@ -12,7 +12,7 @@
        class="btn btn-primary"><i class="far fa-edit"></i> Editer</a>
 
     <button class="btn btn-danger" role='button' data-toggle="modal" data-target="#deleteModal"><i
-                class="fas fa-trash"></i>
+                class="ti ti-trash"></i>
         Supprimer
     </button>
 {% endif %}

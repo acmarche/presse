@@ -1,5 +1,7 @@
 {% extends '@AcMarchePresse/base.html.twig' %}
-
+{% block stylesheets %}
+    <link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
 {% block body %}
 
     <div class="card mb-3">
@@ -7,13 +9,17 @@
             <h3>Nouveaux articles dans {{ album.niceName }}</h3>
         </div>
         <div class="card-body">
-            <a href="{{ path('upload_edit',{'id': album.id}) }}" role="button" class="btn btn-primary float-right">Finaliser</a>
+            {% for message in app.flashes('dropzone_success') %}
+                <div class="alert alert-success" data-turbo-cache="false">{{ message }}</div>
+            {% endfor %}
+
             <div class="clearfix mb-3"></div>
             {{ include('@AcMarchePresse/article/_form.html.twig') }}
         </div>
+        <div class="card-footer">
+            <a href="{{ path('album_show',{'id': album.id}) }}"><i
+                        class="ti ti-arrow-left"></i> Annuler</a>
+        </div>
     </div>
-
-    <a href="{{ path('album_show',{'id': album.id}) }}"><i
-                class="ti ti-arrow-left"></i> Annuler</a>
 
 {% endblock %}

@@ -6,49 +6,37 @@ use AcMarche\Presse\Entity\Album;
 use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Form\ArticlesEditType;
 use AcMarche\Presse\Repository\ArticleRepository;
-use Exception;
+use AcMarche\Presse\Service\UploadHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Vich\UploaderBundle\Handler\UploadHandler;
 
 #[IsGranted('ROLE_PRESSE_ADMIN')]
 class UploadController extends AbstractController
 {
     public function __construct(
-        private UploadHandler $uploadHandler,
         private ArticleRepository $articleRepository,
-    ) {
-    }
+        private readonly UploadHelper $uploadHelper,
+    ) {}
 
-    #[Route(path: '/upload/{id}', name: 'presse_upload')]
+
+    #[Route(path: '/upload/{id}', name: 'upload_file', methods: ['GET', 'POST'])]
     public function upload(Request $request, Album $album): Response
     {
-        $article = new Article($album);
-        /**
-         * @var UploadedFile $file
-         */
         $file = $request->files->get('file');
-        $nom = str_replace('.'.$file->getClientOriginalExtension(), '', $file->getClientOriginalName());
-        $article->setNom($nom);
-        $article->setMime($file->getMimeType());
-        $article->setFileName($file->getClientOriginalName());
-        $article->setDateArticle($album->getDateAlbum());
-        $article->setFile($file);
-        try {
-            $this->uploadHandler->upload($article, 'file');
-        } catch (Exception $exception) {
-            return $this->render('@AcMarchePresse/upload/_response_fail.html.twig', [
-                'error' => $exception->getMessage(),
-            ]);
-        }
-        $this->articleRepository->persist($article);
-        $this->articleRepository->flush();
+        if ($file instanceof UploadedFile) {
+            try {
+                $this->uploadHelper->treatmentFile($file, $album);
+            } catch (\Exception $e) {
 
-        return $this->render('@AcMarchePresse/upload/_response_ok.html.twig');
+            }
+        }
+
+        return new JsonResponse($_POST);
     }
 
     #[Route(path: '/edit/{id}', name: 'upload_edit', methods: ['GET', 'POST'])]
@@ -82,7 +70,7 @@ class UploadController extends AbstractController
                 'articles' => $articles,
                 'album' => $album,
                 'form' => $form->createView(),
-            ]
+            ],
         );
     }
 }

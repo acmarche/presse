@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\UX\Dropzone\Form\DropzoneType;
 
 class ArticleType extends AbstractType
 {
@@ -23,14 +24,19 @@ class ArticleType extends AbstractType
                     'attr' => [
                         'rows' => 5,
                     ],
-                ]
+                ],
             )
             ->add(
                 'dateArticle',
                 DateType::class,
                 [
-                ]
-            );
+                ],
+            )
+            ->add('file', DropzoneType::class, [
+                'attr' => [
+                    'placeholder' => 'Cliquez ici pour sélectioner les images',
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -38,7 +44,7 @@ class ArticleType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => Article::class,
-            ]
+            ],
         );
     }
 }

@@ -7,7 +7,9 @@ use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Form\ArticleType;
 use AcMarche\Presse\Form\UploadType;
 use AcMarche\Presse\Repository\ArticleRepository;
+use AcMarche\Presse\Service\UploadHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,7 @@ class ArticleController extends AbstractController
 {
     public function __construct(
         private ArticleRepository $articleRepository,
+        private readonly UploadHelper $uploadHelper,
     ) {}
 
     #[Route(path: '/', name: 'article_index', methods: ['GET'])]
@@ -27,29 +30,40 @@ class ArticleController extends AbstractController
         return $this->redirectToRoute('homepage');
     }
 
-    #[Route(path: '/new/{id}', name: 'article_new', methods: ['GET'])]
+    #[Route(path: '/new/{id}', name: 'article_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_PRESSE_ADMIN')]
-    public function new(Album $album): Response
+    public function new(Request $request, Album $album): Response
     {
-        $article = new Article($album);
-        $article->setAlbum($album);
-        $form = $this->createForm(
-            UploadType::class,
-            [],
-            [
-                'action' => $this->generateUrl('presse_upload', [
-                    'id' => $album->getId(),
-                ]),
-            ],
-        );
+        $form = $this->createForm(UploadType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            foreach ($data['file'] as $file) {
+                if ($file instanceof UploadedFile) {
+                    try {
+                        $this->uploadHelper->treatmentFile($file, $album);
+                    } catch (\Exception $exception) {
+                        $this->addFlash('danger', 'Erreur upload image: '.$exception->getMessage());
+                    }
+                }
+            }
+
+            return $this->redirectToRoute('album_show', [
+                'id' => $album->getId(),
+            ]);
+        }
+
+        $response = new Response(null, $form->isSubmitted() ? Response::HTTP_ACCEPTED : Response::HTTP_OK);
 
         return $this->render(
             '@AcMarchePresse/article/new.html.twig',
             [
-                'article' => $article,
                 'album' => $album,
                 'form' => $form->createView(),
             ],
+            $response,
         );
     }
 

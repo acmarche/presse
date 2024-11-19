@@ -24,20 +24,20 @@ class Article implements TimestampableInterface, Stringable
     use TimestampableTrait;
 
     #[ORM\Column(type: 'string', length: 200)]
-    private ?string $nom = null;
+    public ?string $nom = null;
     #[ORM\Column(type: 'string', length: 80)]
-    private ?string $mime = null;
+    public ?string $mime = null;
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $description = null;
+    public ?string $description = null;
     #[ORM\Column(type: 'date', nullable: false)]
-    private ?DateTimeInterface $dateArticle = null;
+    public ?DateTimeInterface $dateArticle = null;
 
     #[Vich\UploadableField(mapping: 'article_file', fileNameProperty: 'fileName', size: 'fileSize')]
-    private ?File $file = null;
+    public ?File $file = null;
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $fileName = null;
+    public ?string $fileName = null;
     #[ORM\Column(type: 'integer')]
-    private ?int $fileSize = null;
+    public ?int $fileSize = null;
 
     #[ORM\ManyToOne(targetEntity: Album::class, inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)] private ?Album $album;

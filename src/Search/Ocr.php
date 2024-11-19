@@ -19,54 +19,51 @@ class Ocr
     }
 
     /**
-     * @param string $outputDirectory
-     * @param bool $onlyOcrImage
+     * @param string $tmpDirectory
      * @return void
      */
-    public function createAndCleanOutputDirectory(string $outputDirectory, bool $onlyOcrImage = false): void
+    public function createAndCleanTmpDirectory(string $tmpDirectory): void
     {
-        if (!is_writable($outputDirectory)) {
-            $this->filesystem->mkdir($outputDirectory);
+        if (!is_writable($tmpDirectory)) {
+            $this->filesystem->mkdir($tmpDirectory);
+        }
 
-            return;
-        }
-        $files = scandir($outputDirectory);
-        if ($onlyOcrImage) {
-            $files = array_filter($files, function ($file) use ($outputDirectory) {
-                return (str_contains($file, 'ocr-image'));
-            });
-        } else {
-            // Filter out the '.' and '..' entries
-            $files = array_diff($files, ['.', '..']);
-        }
+        $files = scandir($tmpDirectory);
+        // Filter out the '.' and '..' entries
+        $files = array_diff($files, ['.', '..']);
         foreach ($files as $file) {
-            $filePath = Path::makeAbsolute($file, $outputDirectory);
+            $filePath = Path::makeAbsolute($file, $tmpDirectory);
             if (is_file($filePath)) {
                 $this->filesystem->remove($filePath);
             }
         }
     }
 
-    public function convertToImages(string $file, string $outputDirectory): void
+    public function convertToImages(string $file, string $tmpDirectory): void
     {
-        shell_exec("pdftoppm -png $file $outputDirectory/ocr-image");
+        shell_exec("pdftoppm -png \"$file\" $tmpDirectory");
     }
 
-    public function convertToTxt(string $outputDirectory): void
+    public function convertToTxt(Article $article, ?string $filePath = null, ?string $tmpDirectory = null): void
     {
-        $files = scandir($outputDirectory);
-        $files = array_filter($files, function ($file) use ($outputDirectory) {
-            return (str_contains($file, '.png'));
-        });
-
-        $i = 1;
-        foreach ($files as $item) {
-            $filePath = Path::makeAbsolute($item, $outputDirectory);
-            shell_exec("tesseract $filePath $outputDirectory/text-$i --oem 1 --psm 3 -l fra logfile");
-            $i++;
+        $ocrFile = $this->ocrFile($article);
+        //because command tesseract add .txt
+        $ocrFile = str_replace('.txt', '', $ocrFile);
+        if ($filePath) {
+            shell_exec("tesseract \"$filePath\" $ocrFile --oem 1 --psm 3 -l fra logfile");
+        } else {
+            $files = scandir($tmpDirectory);
+            $files = array_filter($files, function ($file) use ($tmpDirectory) {
+                return (str_contains($file, '.png') || str_contains($file, '.jpg'));
+            });
+            $i = 1;
+            foreach ($files as $item) {
+                $filePath = Path::makeAbsolute($item, $tmpDirectory);
+                shell_exec("tesseract $filePath $tmpDirectory/text-$i --oem 1 --psm 3 -l fra logfile");
+                $i++;
+            }
+            shell_exec("cat $tmpDirectory/text-* > $ocrFile");
         }
-
-        shell_exec("cat $outputDirectory/text-* > $outputDirectory/".Ocr::$ocrFilename);
     }
 
     public function dataDirectory(): string
@@ -74,20 +71,25 @@ class Ocr
         return $this->projectDir.'/public/files/';
     }
 
-    public function outputDirectory(Article $article): string
+    public function tmpDirectory(): string
     {
-        return $this->dataDirectory().$article->getAlbum()->getDirectoryName().DIRECTORY_SEPARATOR."out";
+        return $this->dataDirectory()."ocr";
     }
 
     public function articleFile(Article $article): string
     {
-        return $this->dataDirectory().DIRECTORY_SEPARATOR.$article->getAlbum()->getDirectoryName(
+        return $this->dataDirectory().$article->getAlbum()->getDirectoryName(
             ).DIRECTORY_SEPARATOR.$article->getFileName();
+    }
+
+    public function ocrDirectory(Article $article): string
+    {
+        return $this->dataDirectory().$article->getAlbum()->getDirectoryName().DIRECTORY_SEPARATOR.$article->getId();
     }
 
     public function ocrFile(Article $article): string
     {
-        return $this->outputDirectory($article).'/'.Ocr::$ocrFilename;
+        return $this->ocrDirectory($article).'-'.Ocr::$ocrFilename;
     }
 
     public function fileExists(string $articleFile): bool

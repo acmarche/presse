@@ -70,40 +70,51 @@ class OcrCommand extends Command
 
                 $io->writeln($articleFile);
 
-                $outputDirectory = $this->ocr->outputDirectory($article);
-                if ($force) {
+                if ($this->ocr->fileExists($this->ocr->ocrFile($article))) {
+                    if ($force) {
+                        try {
+                            $this->ocr->filesystem->remove($this->ocr->ocrFile($article));
+                        } catch (\Exception $e) {
+                            $io->error($e->getMessage());
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+
+                $tmpDirectory = $this->ocr->tmpDirectory();
+                try {
+                    $this->ocr->createAndCleanTmpDirectory($tmpDirectory);
+                } catch (\Exception $e) {
+                    $io->error($e->getMessage());
+                    continue;
+                }
+
+                if ($article->getMime() === 'application/pdf') {
                     try {
-                        $this->ocr->createAndCleanOutputDirectory($outputDirectory, onlyOcrImage: false);
+                        $this->ocr->convertToImages($articleFile, $tmpDirectory);
+                    } catch (\Exception $e) {
+                        $io->error($e->getMessage());
+                        continue;
+                    }
+                    try {
+                        $this->ocr->convertToTxt($article, tmpDirectory: $tmpDirectory);
+                    } catch (\Exception $e) {
+                        $io->error($e->getMessage());
+                        continue;
+                    }
+                } else {
+                    try {
+                        $this->ocr->convertToTxt($article, filePath: $articleFile);
                     } catch (\Exception $e) {
                         $io->error($e->getMessage());
                         continue;
                     }
                 }
-                if ($this->ocr->fileExists($this->ocr->ocrFile($article))) {
-                    continue;
-                }
 
                 try {
-                    $this->ocr->createAndCleanOutputDirectory($outputDirectory);
-                } catch (\Exception $e) {
-                    $io->error($e->getMessage());
-                    continue;
-                }
-
-                try {
-                    $this->ocr->convertToImages($articleFile, $outputDirectory);
-                } catch (\Exception $e) {
-                    $io->error($e->getMessage());
-                    continue;
-                }
-                try {
-                    $this->ocr->convertToTxt($outputDirectory);
-                } catch (\Exception $e) {
-                    $io->error($e->getMessage());
-                    continue;
-                }
-                try {
-                    $this->ocr->createAndCleanOutputDirectory($outputDirectory, true);
+                    $this->ocr->createAndCleanTmpDirectory($tmpDirectory);
                 } catch (\Exception $e) {
                     $io->error($e->getMessage());
                     continue;

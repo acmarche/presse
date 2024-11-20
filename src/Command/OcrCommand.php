@@ -48,7 +48,7 @@ class OcrCommand extends Command
 
         if ($id) {
             if (!$article = $this->articleRepository->find($id)) {
-                $this->io->error('Courier not found');
+                $this->io->error('Article not found');
 
                 return Command::FAILURE;
             }
@@ -87,13 +87,15 @@ class OcrCommand extends Command
     private function treatment(Article $article, bool $force): void
     {
         $courierFile = $this->ocr->articleFile($article);
-        $this->io->writeln($courierFile);
-        $this->io->writeln($this->ocr->ocrFile($article));
         $tmpDirectory = $this->ocr->tmpDirectory();
 
         if (!$this->ocr->fileExists($courierFile)) {
             return;
         }
+
+        $this->io->writeln($courierFile);
+        $this->io->writeln($this->ocr->ocrFile($article));
+        $this->io->writeln($tmpDirectory);
 
         if (!$force) {
             if ($this->ocr->fileExists($this->ocr->ocrFile($article))) {
@@ -117,7 +119,6 @@ class OcrCommand extends Command
             return;
         }
 
-        $this->io->writeln($article->getMime());
         if (!str_contains($article->getMime(), 'image')) {
             try {
                 $this->ocr->convertToImages($courierFile, $tmpDirectory);

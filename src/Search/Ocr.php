@@ -92,14 +92,10 @@ class Ocr
             ).DIRECTORY_SEPARATOR.$article->getFileName();
     }
 
-    public function ocrDirectory(Article $article): string
-    {
-        return $this->dataDirectory().$article->getId().DIRECTORY_SEPARATOR;
-    }
-
     public function ocrFile(Article $article): string
     {
-        return $this->ocrDirectory($article).$article->getId().'-'.Ocr::$ocrFilename;
+        return $this->dataDirectory().$article->getAlbum()->getDirectoryName().DIRECTORY_SEPARATOR.$article->getId(
+            ).'-'.Ocr::$ocrFilename;
     }
 
     public function fileExists(string $courierFile): bool

@@ -2,11 +2,11 @@
 
 namespace AcMarche\Presse\Command;
 
+use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Repository\ArticleRepository;
 use AcMarche\Presse\Search\Ocr;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,6 +18,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class OcrCommand extends Command
 {
+    private SymfonyStyle $io;
+
     public function __construct(
         private readonly Ocr $ocr,
         private readonly ArticleRepository $articleRepository,
@@ -27,21 +29,34 @@ class OcrCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption('force', "force", InputOption::VALUE_NONE, 'Delete old ocr txt');
-        $this->addOption('check', "check", InputOption::VALUE_NONE, 'Check ocr txt exist');
-        $this->addArgument('year', InputArgument::OPTIONAL, default: (int)date('Y'));
+        $this->addOption('force', null, InputOption::VALUE_NONE, 'Delete old ocr txt');
+        $this->addOption('check', null, InputOption::VALUE_NONE, 'Check ocr txt exist');
+        $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id article');
+        $this->addOption('year', null, InputOption::VALUE_REQUIRED, 'Depuis cette année', default: date('Y'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
 
         $force = (bool)$input->getOption('force');
         $check = (bool)$input->getOption('check');
-        $year = $input->getArgument('year');
+        $id = (int)$input->getOption('id');
+        $year = (int)$input->getOption('year');
         $currentYear = (int)date('Y');
-
         $years = range($year, $currentYear);
+
+        if ($id) {
+            if (!$article = $this->articleRepository->find($id)) {
+                $this->io->error('Courier not found');
+
+                return Command::FAILURE;
+            }
+            $this->treatment($article, $force);
+
+            return Command::SUCCESS;
+        }
+
         if ($check) {
             foreach ($years as $year) {
                 foreach ($this->articleRepository->findByYear($year) as $article) {
@@ -52,7 +67,7 @@ class OcrCommand extends Command
                     }
 
                     if (!$this->ocr->ocrFile($article)) {
-                        $io->writeln($article->getDateArticle()->format('d-m-Y').' | '.$article->getId());
+                        $this->io->writeln($article->getDateArticle()->format('d-m-Y').' | '.$article->getId());
                     }
                 }
 
@@ -62,67 +77,70 @@ class OcrCommand extends Command
 
         foreach ($years as $year) {
             foreach ($this->articleRepository->findByYear($year) as $article) {
-                $articleFile = $this->ocr->articleFile($article);
-
-                if (!$this->ocr->fileExists($articleFile)) {
-                    continue;
-                }
-
-                $io->writeln($articleFile);
-
-                if ($this->ocr->fileExists($this->ocr->ocrFile($article))) {
-                    if ($force) {
-                        try {
-                            $this->ocr->filesystem->remove($this->ocr->ocrFile($article));
-                        } catch (\Exception $e) {
-                            $io->error($e->getMessage());
-                            continue;
-                        }
-                    } else {
-                        continue;
-                    }
-                }
-
-                $tmpDirectory = $this->ocr->tmpDirectory();
-                try {
-                    $this->ocr->createAndCleanTmpDirectory($tmpDirectory);
-                } catch (\Exception $e) {
-                    $io->error($e->getMessage());
-                    continue;
-                }
-
-                if ($article->getMime() === 'application/pdf') {
-                    try {
-                        $this->ocr->convertToImages($articleFile, $tmpDirectory);
-                    } catch (\Exception $e) {
-                        $io->error($e->getMessage());
-                        continue;
-                    }
-                    try {
-                        $this->ocr->convertToTxt($article, tmpDirectory: $tmpDirectory);
-                    } catch (\Exception $e) {
-                        $io->error($e->getMessage());
-                        continue;
-                    }
-                } else {
-                    try {
-                        $this->ocr->convertToTxt($article, filePath: $articleFile);
-                    } catch (\Exception $e) {
-                        $io->error($e->getMessage());
-                        continue;
-                    }
-                }
-
-                try {
-                    $this->ocr->createAndCleanTmpDirectory($tmpDirectory);
-                } catch (\Exception $e) {
-                    $io->error($e->getMessage());
-                    continue;
-                }
+                $this->treatment($article, $force);
             }
         }
 
         return Command::SUCCESS;
     }
 
+    private function treatment(Article $article, bool $force): void
+    {
+        $courierFile = $this->ocr->articleFile($article);
+        $this->io->writeln($courierFile);
+        $this->io->writeln($this->ocr->ocrFile($article));
+        $tmpDirectory = $this->ocr->tmpDirectory();
+
+        if (!$this->ocr->fileExists($courierFile)) {
+            return;
+        }
+
+        if (!$force) {
+            if ($this->ocr->fileExists($this->ocr->ocrFile($article))) {
+                $this->io->warning('ocr file already exist');
+
+                return;
+            }
+        }
+
+        try {
+            $this->ocr->cleanTmpDirectory($tmpDirectory);
+        } catch (\Exception $e) {
+            $this->io->error($e->getMessage());
+
+            return;
+        }
+
+        if ($this->ocr->isCleanTmpDirectory($tmpDirectory)) {
+            $this->io->error('Le dossier temporaire n\'est pas vide !');
+
+            return;
+        }
+
+        $this->io->writeln($article->getMime());
+        if (!str_contains($article->getMime(), 'image')) {
+            try {
+                $this->ocr->convertToImages($courierFile, $tmpDirectory);
+            } catch (\Exception $e) {
+                $this->io->error($e->getMessage());
+
+                return;
+            }
+        }
+
+        try {
+            $this->ocr->convertToTxt($article, $article->getMime(), $tmpDirectory);
+        } catch (\Exception $e) {
+            $this->io->error($e->getMessage());
+
+            return;
+        }
+        try {
+            $this->ocr->cleanTmpDirectory($tmpDirectory);
+        } catch (\Exception $e) {
+            $this->io->error($e->getMessage());
+
+            return;
+        }
+    }
 }

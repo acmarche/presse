@@ -3,53 +3,44 @@
 namespace AcMarche\Presse\Security;
 
 use AcMarche\Presse\Repository\UserRepository;
+use AcMarche\Presse\Security\Ldap\LdapPresse;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Ldap\LdapInterface;
+use Symfony\Component\Ldap\Security\LdapBadge;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterface;
+use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class AppPresseAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface,
-                                                                      InteractiveAuthenticatorInterface
+/**
+ *
+ */
+class PresseLdapAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    final public const LOGIN_ROUTE = 'app_login';
 
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private UserRepository $userRepository,
+        #[Autowire(env: 'ACLDAP_DN'), \SensitiveParameter]
+        private readonly string $ldapDn,
+        #[Autowire(env: 'ACLDAP_USER'), \SensitiveParameter]
+        private readonly string $ldapUser,
+        #[Autowire(env: 'ACLDAP_PASSWORD'), \SensitiveParameter]
+        private readonly string $ldapPassword,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UserRepository $userRepository,
+        private readonly ParameterBagInterface $parameterBag,
     ) {}
-
-    public function supports(Request $request): bool
-    {
-        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getBaseUrl(
-            ).$request->getPathInfo();
-    }
-
-    public function start(Request $request, AuthenticationException $authException = null): Response
-    {
-        $url = $this->getLoginUrl($request);
-
-        return new RedirectResponse($url);
-    }
-
-    public function isInteractive(): bool
-    {
-        return true;
-    }
 
     public function authenticate(Request $request): Passport
     {
@@ -59,32 +50,24 @@ class AppPresseAuthenticator extends AbstractAuthenticator implements Authentica
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
-        $badges =
-            [
-                new CsrfTokenBadge('authenticate', $token),
-                new RememberMeBadge(),
-            ];
+        $query = sprintf('(&(|(sAMAccountName=*%s*))(objectClass=person))', $email);
+        $badges = [
+            new CsrfTokenBadge('authenticate', $token),
+            new RememberMeBadge(),
+            new LdapBadge(
+                LdapPresse::class,
+                $this->ldapDn,
+                $this->ldapUser,
+                $this->ldapPassword,
+                $query,
+            ),
+        ];
 
         return new Passport(
             new UserBadge($email),
             new PasswordCredentials($password),
             $badges,
         );
-    }
-
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
-    {
-        if ($request->hasSession()) {
-            $request->getSession()->set(SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
-        }
-
-        if (interface_exists(LdapInterface::class)) {
-            return null;
-        }
-
-        $url = $this->getLoginUrl($request);
-
-        return new RedirectResponse($url);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

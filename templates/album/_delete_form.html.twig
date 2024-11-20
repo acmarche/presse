@@ -1,24 +1,20 @@
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">Supprimer l'album</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Êtes vous sur de supprimer <strong>l' ALBUM</strong> {{ album.niceName }}
             </div>
             <div class="modal-footer">
                 <form method="post" action="{{ path('album_delete', {'id': album.id}) }}">
-
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ album.id) }}">
                     <button type="button" class="btn btn-secondary"
                             data-bs-dismiss="modal">Annuler
                     </button>
-                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                    <button type="submit" class="btn btn-danger">Supprimer l' album</button>
                 </form>
             </div>
         </div>

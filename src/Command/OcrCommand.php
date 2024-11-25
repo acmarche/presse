@@ -43,8 +43,6 @@ class OcrCommand extends Command
         $check = (bool)$input->getOption('check');
         $id = (int)$input->getOption('id');
         $year = (int)$input->getOption('year');
-        $currentYear = (int)date('Y');
-        $years = range($year, $currentYear);
 
         if ($id) {
             if (!$article = $this->articleRepository->find($id)) {
@@ -58,27 +56,23 @@ class OcrCommand extends Command
         }
 
         if ($check) {
-            foreach ($years as $year) {
-                foreach ($this->articleRepository->findByYear($year) as $article) {
-                    $articleFile = $this->ocr->articleFile($article);
+            foreach ($this->articleRepository->findByYear($year) as $article) {
+                $articleFile = $this->ocr->articleFile($article);
 
-                    if (!$this->ocr->fileExists($articleFile)) {
-                        continue;
-                    }
+                if (!$this->ocr->fileExists($articleFile)) {
+                    continue;
+                }
 
-                    if (!$this->ocr->ocrFile($article)) {
-                        $this->io->writeln($article->dateArticle->format('d-m-Y').' | '.$article->getId());
-                    }
+                if (!$this->ocr->ocrFile($article)) {
+                    $this->io->writeln($article->dateArticle->format('d-m-Y').' | '.$article->getId());
                 }
 
                 return Command::SUCCESS;
             }
         }
 
-        foreach ($years as $year) {
-            foreach ($this->articleRepository->findByYear($year) as $article) {
-                $this->treatment($article, $force);
-            }
+        foreach ($this->articleRepository->findByYear($year) as $article) {
+            $this->treatment($article, $force);
         }
 
         return Command::SUCCESS;

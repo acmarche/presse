@@ -1,7 +1,7 @@
 {% if articles|length > 0 %}
     <h3 class="text-success">Articles de presse</h3>
     <hr>
-    <div id="44lightgallery" data-controller="gallery" class="d-grid"
+    <div id="lightgallery" data-controller="gallery" class="d-grid"
          style="grid-template-columns: repeat(2, 1fr); gap: 2rem;">
         {% for article in articles %}
             <div class="card"
@@ -16,10 +16,6 @@
                                 <img src="{{ vich_uploader_asset(article, 'file')| imagine_filter('miniature') }}"
                                      alt="img"
                                      class="img-thumbnail mb-2 ">
-                            {% else %}
-                                <i class="ti ti-download"></i> Télécharger<br/>
-                                <span class="text-muted">({{ article.mime }})</span>
-                                <p>Faite un clic droit "Ouvrir dans un nouvel onglet"</p>
                             {% endif %}
                         </a>
                     {% else %}
@@ -37,14 +33,4 @@
             </div>
         {% endfor %}
     </div>
-
-    {# CAPTIONS #}
-    {% for article in articles %}
-        {% if article.fileName is defined %}
-            <div id="caption{{ article.id }}" style="display:none">
-                <h4>{{ article.nom }}</h4>
-                <p>{{ article.description }}</p>
-            </div>
-        {% endif %}
-    {% endfor %}
 {% endif %}

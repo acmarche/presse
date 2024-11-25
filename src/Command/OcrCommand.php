@@ -43,6 +43,9 @@ class OcrCommand extends Command
         $check = (bool)$input->getOption('check');
         $id = (int)$input->getOption('id');
         $year = (int)$input->getOption('year');
+        if (!$year) {
+            $year = (int)date('Y');
+        }
 
         if ($id) {
             if (!$article = $this->articleRepository->find($id)) {

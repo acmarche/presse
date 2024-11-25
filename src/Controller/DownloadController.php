@@ -5,7 +5,7 @@ namespace AcMarche\Presse\Controller;
 use AcMarche\Presse\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Vich\UploaderBundle\Handler\DownloadHandler;
 
 class DownloadController extends AbstractController

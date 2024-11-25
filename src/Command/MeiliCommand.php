@@ -48,8 +48,6 @@ class MeiliCommand extends Command
         $update = (bool)$input->getOption('update');
 
         $year = $input->getArgument('year');
-        $currentYear = (int)date('Y');
-        $years = range($year, $currentYear);
 
         if ($key) {
             dump($this->meiliServer->createApiKey());
@@ -78,7 +76,7 @@ class MeiliCommand extends Command
         }
 
         if ($update) {
-            $this->meiliServer->addArticles($years);
+            $this->meiliServer->addArticles($year);
         }
 
         return Command::SUCCESS;

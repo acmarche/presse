@@ -10,6 +10,7 @@ trait MeiliTrait
     public ?Client $client = null;
 
     private array $filterableAttributes = [
+        'year',
         'article_courrier_timestamp',
     ];
     private array $sortableAttributes = [

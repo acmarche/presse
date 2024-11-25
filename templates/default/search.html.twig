@@ -9,43 +9,32 @@
         <div class="card-body">
             {{ form_start(form) }}
             {{ form_errors(form) }}
-            {{ form_widget(form) }}
+            <div class="row">
+                <div class="col-6">{{ form_row(form.keyword) }}</div>
+                <div class="col-6">
+                    {{ form_row(form.year) }}
+                </div>
+            </div>
             <button class="btn btn-primary" type="submit"><i class="far fa-save"></i> Rechercher</button>
             {{ form_end(form) }}
 
-            <h5 class="text-success mt-3">Articles</h5>
-            <hr>
-            <table class="table table-bordered">
-                {% for article in articles %}
-                    <tr>
-                        <td>
-                            <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.nom }}</a>
-                        </td>
-                        <td>{{ article.dateArticle|date('d-m-Y') }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="2">Rien trouvé</td>
-                    </tr>
-                {% endfor %}
-            </table>
-
-            <h5 class="text-success">Abums</h5>
-            <hr>
-            <table class="table table-bordered">
-                {% for album in albums %}
-                    <tr>
-                        <td>
-                            <a href="{{ path('album_show', {'id': album.id}) }}">{{ album.niceName }}</a>
-                        </td>
-                        <td>{{ album.dateAlbum|date('d-m-Y') }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="2">Rien trouvé</td>
-                    </tr>
-                {% endfor %}
-            </table>
+            {% if search %}
+                <h5 class="text-success mt-3">{{ count }} article(s) trouvé(s)</h5>
+                <table class="table table-bordered">
+                    {% for article in articles %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.nom }}</a>
+                            </td>
+                            <td>{{ article.dateArticle|date('d-m-Y') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="2">Rien trouvé</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
         </div>
     </div>
 

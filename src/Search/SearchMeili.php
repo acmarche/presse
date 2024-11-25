@@ -22,24 +22,24 @@ class SearchMeili
     ) {}
 
     /**
-     * @param array $args
+     * @param string|null $keyword
+     * @param int|null $year
      * @param int $limit
      * @param array $sort
      * @return SearchResult
-     * @throws \Exception
      */
     public function search(
-        array $args,
+        ?string $keyword,
+        ?int $year,
         int $limit = 150,
         array $sort = [],
     ): SearchResult {
-        $filters = [];
-        $filters = array_filter($filters, fn($item) => $item !== null);
-        $filter = implode(' AND ', $filters);
-
+        $filter = '';
+        if($year) {
+            $filter = 'year = '.$year;
+        }
         $this->init();
         $index = $this->client->index($this->indexName);
-        $keyword = $args['keyword'] ?? '';
 
         $this->query = $filter;
 

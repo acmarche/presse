@@ -71,17 +71,16 @@ class MeiliServer
         $index->addDocuments([$document], $this->primaryKey);
     }
 
-    public function addArticles(array $years): void
+    public function addArticles(int $year): void
     {
         $this->init();
         $documents = [];
-        foreach ($years as $year) {
-            foreach ($this->articleRepository->findByYear($year) as $article) {
-                $documents[] = $this->createDocument($article);
-            }
-            $index = $this->client->index($this->indexName);
-            $index->addDocuments($documents, $this->primaryKey);
+
+        foreach ($this->articleRepository->findByYear($year) as $article) {
+            $documents[] = $this->createDocument($article);
         }
+        $index = $this->client->index($this->indexName);
+        $index->addDocuments($documents, $this->primaryKey);
     }
 
     public function createDocument(Article $article): array
@@ -89,11 +88,12 @@ class MeiliServer
         $document = [];
         $document['id'] = $article->getId();
         $document['idSearch'] = MeiliServer::createKey($article->getId());
-        $document['nom'] = Cleaner::cleandata($article->getNom());
-        $document['description'] = Cleaner::cleandata($article->getDescription());
+        $document['nom'] = Cleaner::cleandata($article->nom);
+        $document['description'] = Cleaner::cleandata($article->description);
         $document['album'] = $article->getAlbum()?->getId();
-        $document['date_article'] = $article->getDateArticle()->format('Y-m-d');
-        $date = $article->getDateArticle();
+        $document['date_article'] = $article->dateArticle->format('Y-m-d');
+        $document['year'] = $article->dateArticle->format('Y');
+        $date = $article->dateArticle;
         $dateArticle = Carbon::createFromDate(
             $date->format('Y'),
             $date->format('m'),

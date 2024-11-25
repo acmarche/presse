@@ -89,7 +89,7 @@ class Ocr
     public function articleFile(Article $article): string
     {
         return $this->dataDirectory().$article->getAlbum()->getDirectoryName(
-            ).DIRECTORY_SEPARATOR.$article->getFileName();
+            ).DIRECTORY_SEPARATOR.$article->fileName;
     }
 
     public function ocrFile(Article $article): string

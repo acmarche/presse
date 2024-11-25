@@ -76,6 +76,9 @@ class MeiliCommand extends Command
         }
 
         if ($update) {
+            if (!$year) {
+                $year = (int)date('Y');
+            }
             $this->meiliServer->addArticles($year);
         }
 

@@ -67,7 +67,7 @@ class OcrCommand extends Command
                     }
 
                     if (!$this->ocr->ocrFile($article)) {
-                        $this->io->writeln($article->getDateArticle()->format('d-m-Y').' | '.$article->getId());
+                        $this->io->writeln($article->dateArticle->format('d-m-Y').' | '.$article->getId());
                     }
                 }
 
@@ -119,7 +119,7 @@ class OcrCommand extends Command
             return;
         }
 
-        if (!str_contains($article->getMime(), 'image')) {
+        if (!str_contains($article->mime, 'image')) {
             try {
                 $this->ocr->convertToImages($courierFile, $tmpDirectory);
             } catch (\Exception $e) {
@@ -130,7 +130,7 @@ class OcrCommand extends Command
         }
 
         try {
-            $this->ocr->convertToTxt($article, $article->getMime(), $tmpDirectory);
+            $this->ocr->convertToTxt($article, $article->mime, $tmpDirectory);
         } catch (\Exception $e) {
             $this->io->error($e->getMessage());
 

@@ -10,16 +10,10 @@ trait MeiliTrait
     public ?Client $client = null;
 
     private array $filterableAttributes = [
-        'date_courrier_timestamp',
-        'recommande',
-        'destinataires',
-        'services',
-        'numero',
-        'expediteur',
+        'article_courrier_timestamp',
     ];
     private array $sortableAttributes = [
-        'date_courrier_timestamp',
-        'expediteur',
+        'article_courrier_timestamp',
     ];
     private Indexes|null $index = null;
 

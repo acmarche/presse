@@ -12,7 +12,7 @@
             {% include '@AcMarchePresse/_menu.html.twig' %}
         </div>
         <form class="d-flex" action="{{ path('presse_search') }}">
-            <input class="form-control me-2" type="search" placeholder="Mot clef" aria-label="Search">
+            <input class="form-control me-2" name="keyword" type="search" placeholder="Mot clef" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Rechercher</button>
         </form>
     </div>

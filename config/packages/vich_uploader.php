@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Config\VichUploaderConfig;
+use Vich\UploaderBundle\Naming\UniqidNamer;
 
 return static function (VichUploaderConfig $vichUploaderConfig): void {
     $vichUploaderConfig
@@ -10,13 +11,13 @@ return static function (VichUploaderConfig $vichUploaderConfig): void {
             [
                 'uri_prefix' => '/files',
                 'upload_destination' => '%kernel.project_dir%/public/files',
-                'namer' => ['service' => 'Vich\UploaderBundle\Naming\OrignameNamer'],
-                'directory_namer' => 'AcMarche\Presse\Service\ArticleDirectoryNamer',
+                'namer' => ['service' => UniqidNamer::class],
+                'directory_namer' => AcMarche\Presse\Service\ArticleDirectoryNamer::class,
             ]
         );
     $vichUploaderConfig->mappings('album_image', [
         'uri_prefix' => '/albums',
         'upload_destination' => '%kernel.project_dir%/public/files',
-        'directory_namer' => 'AcMarche\Presse\Service\AlbumDirectoryNamer',
+        'directory_namer' => AcMarche\Presse\Service\AlbumDirectoryNamer::class,
     ]);
 };

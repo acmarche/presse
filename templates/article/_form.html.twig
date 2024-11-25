@@ -1,7 +1,10 @@
-{{ form_start(form, { 'action': path('upload_file',{'id':album.id}), 'attr': {'id': 'formdrop','class': 'mt-3 dropzone', 'data-controller': 'dropzone'}}) }}
+{{ form_start(form, { 'action': path('upload_file',{'id':album.id}), 'attr': {'id': 'formdrop','class': 'mt-3 dropzone-container dropzone', 'data-controller': 'dropzone'}}) }}
 {{ form_errors(form) }}
 {{ form_widget(form) }}
-<button class="btn btn-primary mr-1 mb-2" type="submit"><i class="ti ti-device-floppy" aria-hidden="true"></i>
-    Finish
-</button>
 {{ form_end(form) }}
+
+<a href="{{ path('upload_edit', {'id': album.id}) }}"
+   class="btn btn-primary mr-1 my-2">
+    <i class="ti ti-device-floppy" aria-hidden="true"></i>
+    Nommer et dater les articles
+</a>

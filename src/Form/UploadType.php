@@ -11,13 +11,13 @@ class UploadType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('file', DropzoneType::class, [
+     /*  $builder->add('file', DropzoneType::class, [
             'attr' => [
                 'placeholder' => 'Cliquez ici pour sélectioner les images',
             ],
             'label' => false,
             'multiple' => true,
-        ]);
+        ]);*/
     }
 
     public function configureOptions(OptionsResolver $resolver): void

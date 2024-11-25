@@ -24,7 +24,7 @@ class UploadController extends AbstractController
     ) {}
 
 
-    #[Route(path: '/upload/{id}', name: 'upload_file', methods: ['GET', 'POST'])]
+    #[Route(path: '/upload/new/{id}', name: 'upload_file', methods: ['GET', 'POST'])]
     public function upload(Request $request, Album $album): Response
     {
         $file = $request->files->get('file');
@@ -32,14 +32,14 @@ class UploadController extends AbstractController
             try {
                 $this->uploadHelper->treatmentFile($file, $album);
             } catch (\Exception $e) {
-
+                return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
             }
         }
 
         return new JsonResponse($_POST);
     }
 
-    #[Route(path: '/edit/{id}', name: 'upload_edit', methods: ['GET', 'POST'])]
+    #[Route(path: '/upload/edit/{id}', name: 'upload_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Album $album): Response
     {
         $articles = $this->articleRepository->findByAlbum($album);

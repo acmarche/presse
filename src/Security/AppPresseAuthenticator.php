@@ -33,7 +33,7 @@ class AppPresseAuthenticator extends AbstractAuthenticator implements Authentica
         private UserRepository $userRepository,
     ) {}
 
-    public function supports(Request $request): bool
+    public function supports(Request $request):  ?bool
     {
         return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getBaseUrl(
             ).$request->getPathInfo();

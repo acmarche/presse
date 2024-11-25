@@ -26,7 +26,7 @@
                             <td>
                                 <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.nom }}</a>
                             </td>
-                            <td>{{ article.dateArticle|date('d-m-Y') }}</td>
+                            <td>{{ article.date_article|date('d-m-Y') }}</td>
                         </tr>
                     {% else %}
                         <tr>

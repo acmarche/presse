@@ -46,8 +46,6 @@ class DefaultController extends AbstractController
             $data = $form->getData();
             $keyword = $data['keyword'];
             $year = $data['year'];
-        } else {
-            dump($form->getErrors());
         }
 
         if ($keyword) {

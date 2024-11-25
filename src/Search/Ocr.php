@@ -58,6 +58,7 @@ class Ocr
             $ocrFile = str_replace('.txt', '', $ocrFile);
             $filePath = $this->articleFile($article);
             shell_exec("tesseract \"$filePath\" $ocrFile --oem 1 --psm 3 -l fra logfile");
+            $this->copyLogFile($article);
 
             return;
         }
@@ -71,6 +72,7 @@ class Ocr
         foreach ($files as $item) {
             $filePath = Path::makeAbsolute($item, $tmpDirectory);
             shell_exec("tesseract $filePath $tmpDirectory/text-$i --oem 1 --psm 3 -l fra logfile");
+            $this->copyLogFile($article);
             $i++;
         }
         shell_exec("cat $tmpDirectory/text-* > $ocrFile");
@@ -88,8 +90,7 @@ class Ocr
 
     public function articleFile(Article $article): string
     {
-        return $this->dataDirectory().$article->getAlbum()->getDirectoryName(
-            ).DIRECTORY_SEPARATOR.$article->fileName;
+        return $this->dataDirectory().$article->getAlbum()->getDirectoryName().DIRECTORY_SEPARATOR.$article->fileName;
     }
 
     public function ocrFile(Article $article): string
@@ -101,5 +102,12 @@ class Ocr
     public function fileExists(string $courierFile): bool
     {
         return is_readable($courierFile) && is_file($courierFile);
+    }
+
+    private function copyLogFile(Article $article): void
+    {
+        $logFile = $this->projectDir.DIRECTORY_SEPARATOR.'var'.DIRECTORY_SEPARATOR.'tesseract'.DIRECTORY_SEPARATOR.$article->getId(
+            ).'-tesseract.log';
+        shell_exec("cp $this->projectDir/tesseract.log $logFile");
     }
 }

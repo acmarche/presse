@@ -4,11 +4,20 @@
     <div id="lightgallery" data-controller="gallery" class="d-grid"
          style="grid-template-columns: repeat(2, 1fr); gap: 2rem;">
         {% for article in articles %}
-            <div class="card"
-                 data-src="{{ vich_uploader_asset(article, 'file') }}"
-                 data-sub-html="#caption{{ article.id }}">
-                <h4 class="card-header">{{ article.nom }}</h4>
-                <div class="card-body d-flex justify-content-center">
+            <div class="card">
+                <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                    <h4>{{ article.nom }}</h4>
+                    {% if is_granted('ROLE_PRESSE_ADMIN') %}
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ path('article_show', {'id':article.id}) }}">
+                                <i class="ti ti-pencil"></i> Gérer
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body d-flex justify-content-center"
+                     data-src="{{ vich_uploader_asset(article, 'file') }}"
+                     data-sub-html="#caption{{ article.id }}">
                     {% if article.fileName is defined %}
                         <a href="{{ vich_uploader_asset(article, 'file') }}" title="{{ article.nom }}"
                            class="me-2">

@@ -1,1 +1,17 @@
-{% include '@AcMarchePresse/default/errors/error403.html.twig' %}
+{% extends '@AcMarchePresse/base.html.twig' %}
+
+{% block title %}
+    {{ status_text }}
+{% endblock %}
+
+{% block body -%}
+    <div class="card">
+        <h3 class="card-header">Accès non autorisé</h3>
+        <div class="card-body">
+
+            <img src="{{ asset('bundles/acmarchepresse/images/denied.png') }}" alt="denied" class="pull-left"/>
+            <p class="pull-left text-danger">Vous n'avez pas le droit d'accèder à cette page</p>
+
+        </div>
+    </div>
+{% endblock %}

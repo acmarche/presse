@@ -89,6 +89,7 @@ class MeiliServer
         $document['id'] = $article->getId();
         $document['idSearch'] = MeiliServer::createKey($article->getId());
         $document['nom'] = Cleaner::cleandata($article->nom);
+        $document['mime'] = $article->mime;
         $document['description'] = Cleaner::cleandata($article->description);
         $document['album'] = $article->getAlbum()?->getId();
         $document['date_article'] = $article->dateArticle->format('Y-m-d');

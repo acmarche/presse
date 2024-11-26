@@ -103,7 +103,7 @@ class ArticleController extends AbstractController
         );
     }
 
-    #[Route(path: '/{id}', name: 'article_delete', methods: ['DELETE'])]
+    #[Route(path: '/{id}', name: 'article_delete', methods: ['POST','DELETE'])]
     #[IsGranted('ROLE_PRESSE_ADMIN')]
     public function delete(Request $request, Article $article): RedirectResponse
     {

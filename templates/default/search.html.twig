@@ -20,32 +20,28 @@
 
             {% if search %}
                 <h5 class="text-success mt-3">{{ count }} article(s) trouvé(s)</h5>
-                <table class="table table-bordered">
-                    {% for article in articles %}
-                        <tr>
-                            <td>
-                                {% if 'image' in article.mime %}
-                                    <img src="{{ article.id|article_path }}"
-                                         alt="img"
-                                         class="img-thumbnail mb-2 ">
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.nom }}</a>
-                            </td>
-                            <td>
-                                {{ article.date_article|date('d-m-Y') }}
-                            </td>
-                            <td>
-                                {{ article.content|u.truncate(220,'...') }}
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="2">Rien trouvé</td>
-                        </tr>
-                    {% endfor %}
-                </table>
+                {% for article in articles %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if 'image' in article.mime %}
+                                <img src="{{ article.id|article_path }}"
+                                     alt="img"
+                                     class="img-thumbnail mb-2 ">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.nom }}</a>
+                        </div>
+                        <div class="col-md-4">
+                            {{ article.date_article|date('d-m-Y') }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ article.content|u.truncate(220,'...') }}
+                        </div>
+                    </div>
+                {% else %}
+                    <p>Rien trouvé</p>
+                {% endfor %}
             {% endif %}
         </div>
     </div>

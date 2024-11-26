@@ -25,7 +25,7 @@
                         <tr>
                             <td>
                                 {% if 'image' in article.mime %}
-                                    <img src="{{ vich_uploader_asset(article, 'file')| imagine_filter('miniature') }}"
+                                    <img src="{{ article.id|article_path }}"
                                          alt="img"
                                          class="img-thumbnail mb-2 ">
                                 {% endif %}

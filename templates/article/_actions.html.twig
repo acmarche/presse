@@ -9,7 +9,7 @@
 
 {% if is_granted('ROLE_PRESSE_ADMIN') %}
     <a href="{{ path('article_edit', { 'id': article.id }) }}" role="button"
-       class="btn btn-primary"><i class="far fa-edit"></i> Editer</a>
+       class="btn btn-primary"><i class="ti ti-edit"></i> Editer</a>
     <button class="btn btn-danger" role='button' data-toggle="modal" data-target="#deleteModal"><i
                 class="ti ti-trash"></i>
         Supprimer l'article

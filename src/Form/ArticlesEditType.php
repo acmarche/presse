@@ -16,8 +16,8 @@ class ArticlesEditType extends AbstractType
                 'articles',
                 CollectionType::class,
                 [
-                    'entry_type' => ArticleType::class,
-                ]
+                    'entry_type' => ArticlesListType::class,
+                ],
             );
     }
 
@@ -25,7 +25,7 @@ class ArticlesEditType extends AbstractType
     {
         $resolver->setDefaults(
             [
-            ]
+            ],
         );
     }
 }

@@ -3,7 +3,6 @@
 namespace AcMarche\Presse\Controller;
 
 use AcMarche\Presse\Entity\Album;
-use AcMarche\Presse\Entity\Article;
 use AcMarche\Presse\Form\ArticlesEditType;
 use AcMarche\Presse\Repository\ArticleRepository;
 use AcMarche\Presse\Service\UploadHelper;
@@ -50,9 +49,11 @@ class UploadController extends AbstractController
                 'id' => $album->getId(),
             ]);
         }
+
         $form = $this->createForm(ArticlesEditType::class, [
             'articles' => $articles,
         ]);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->articleRepository->flush();

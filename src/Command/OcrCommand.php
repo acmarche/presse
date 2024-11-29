@@ -61,7 +61,7 @@ class OcrCommand extends Command
         if ($check) {
             $this->io->writeln('Checking');
             foreach ($this->articleRepository->findByYear($year) as $article) {
-                $this->io->writeln('article: '.$article->getId());
+
                 $articleFile = $this->ocr->articleFile($article);
 
                 if (!$this->ocr->fileExists($articleFile)) {

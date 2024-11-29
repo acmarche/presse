@@ -33,7 +33,7 @@ class MeiliCommand extends Command
         $this->addOption('tasks', "tasks", InputOption::VALUE_NONE, 'Display tasks');
         $this->addOption('reset', "reset", InputOption::VALUE_NONE, 'Search engine reset');
         $this->addOption('update', "update", InputOption::VALUE_NONE, 'Update data');
-        $this->addArgument('year', InputArgument::OPTIONAL, default: (int)date('Y'));
+        $this->addOption('year', InputOption::VALUE_REQUIRED, default: (int)date('Y'));
         $this->addArgument('keyword', InputArgument::OPTIONAL);
     }
 
@@ -46,8 +46,7 @@ class MeiliCommand extends Command
         $tasks = (bool)$input->getOption('tasks');
         $reset = (bool)$input->getOption('reset');
         $update = (bool)$input->getOption('update');
-
-        $year = $input->getArgument('year');
+        $year = $input->getOption('year');
 
         if ($key) {
             dump($this->meiliServer->createApiKey());
@@ -79,6 +78,7 @@ class MeiliCommand extends Command
             if (!$year) {
                 $year = (int)date('Y');
             }
+            $io->writeln('Indexing '.$year);
             $this->meiliServer->addArticles($year);
         }
 

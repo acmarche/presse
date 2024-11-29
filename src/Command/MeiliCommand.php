@@ -33,7 +33,7 @@ class MeiliCommand extends Command
         $this->addOption('tasks', "tasks", InputOption::VALUE_NONE, 'Display tasks');
         $this->addOption('reset', "reset", InputOption::VALUE_NONE, 'Search engine reset');
         $this->addOption('update', "update", InputOption::VALUE_NONE, 'Update data');
-        $this->addOption('year', 'year',InputOption::VALUE_REQUIRED, default: (int)date('Y'));
+        $this->addOption('year', 'year',InputOption::VALUE_REQUIRED,'Année', default: (int)date('Y'));
         $this->addArgument('keyword', InputArgument::OPTIONAL);
     }
 

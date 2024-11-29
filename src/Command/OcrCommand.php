@@ -59,15 +59,18 @@ class OcrCommand extends Command
         }
 
         if ($check) {
+            $this->io->writeln('Checking');
             foreach ($this->articleRepository->findByYear($year) as $article) {
+                $this->io->writeln('article: '.$article->getId());
                 $articleFile = $this->ocr->articleFile($article);
 
                 if (!$this->ocr->fileExists($articleFile)) {
+                    $this->io->error('Article file not found');
                     continue;
                 }
 
                 if (!$this->ocr->ocrFile($article)) {
-                    $this->io->writeln($article->dateArticle->format('d-m-Y').' | '.$article->getId());
+                    $this->io->error("No ocr file ".$article->dateArticle->format('d-m-Y').' | '.$article->getId());
                 }
             }
 

@@ -69,9 +69,9 @@ class OcrCommand extends Command
                 if (!$this->ocr->ocrFile($article)) {
                     $this->io->writeln($article->dateArticle->format('d-m-Y').' | '.$article->getId());
                 }
-
-                return Command::SUCCESS;
             }
+
+            return Command::SUCCESS;
         }
 
         foreach ($this->articleRepository->findByYear($year) as $article) {

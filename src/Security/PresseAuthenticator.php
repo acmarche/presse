@@ -13,7 +13,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
@@ -21,8 +20,9 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class AppPresseAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface,
-                                                                      InteractiveAuthenticatorInterface
+
+class PresseAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface,
+                                                                   InteractiveAuthenticatorInterface
 {
     use TargetPathTrait;
 
@@ -32,24 +32,6 @@ class AppPresseAuthenticator extends AbstractAuthenticator implements Authentica
         private UrlGeneratorInterface $urlGenerator,
         private UserRepository $userRepository,
     ) {}
-
-    public function supports(Request $request):  ?bool
-    {
-        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getBaseUrl(
-            ).$request->getPathInfo();
-    }
-
-    public function start(Request $request, AuthenticationException $authException = null): Response
-    {
-        $url = $this->getLoginUrl($request);
-
-        return new RedirectResponse($url);
-    }
-
-    public function isInteractive(): bool
-    {
-        return true;
-    }
 
     public function authenticate(Request $request): Passport
     {
@@ -62,7 +44,6 @@ class AppPresseAuthenticator extends AbstractAuthenticator implements Authentica
         $badges =
             [
                 new CsrfTokenBadge('authenticate', $token),
-                new RememberMeBadge(),
             ];
 
         return new Passport(
@@ -70,6 +51,33 @@ class AppPresseAuthenticator extends AbstractAuthenticator implements Authentica
             new PasswordCredentials($password),
             $badges,
         );
+    }
+
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    {
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate('homepage'));
+    }
+
+    protected function getLoginUrl(Request $request): string
+    {
+        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
+    {
+        $url = $this->getLoginUrl($request);
+
+        return new RedirectResponse($url);
+    }
+
+    public function supports(Request $request): ?bool
+    {
+        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getBaseUrl(
+            ).$request->getPathInfo();
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
@@ -87,17 +95,8 @@ class AppPresseAuthenticator extends AbstractAuthenticator implements Authentica
         return new RedirectResponse($url);
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    public function isInteractive(): bool
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath);
-        }
-
-        return new RedirectResponse($this->urlGenerator->generate('homepage'));
-    }
-
-    protected function getLoginUrl(Request $request): string
-    {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+        return true;
     }
 }

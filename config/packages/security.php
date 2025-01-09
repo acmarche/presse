@@ -1,39 +1,40 @@
 <?php
 
 use AcMarche\Presse\Entity\User;
-use AcMarche\Presse\Security\AppPresseAuthenticator;
+use AcMarche\Presse\Security\PresseAuthenticator;
 use AcMarche\Presse\Security\PresseLdapAuthenticator;
 use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Ldap\LdapInterface;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-use Symfony\Config\SecurityConfig;
-
-return static function (SecurityConfig $security) {
-    $security->provider('presse_user_provider', [
-        'entity' => [
-            'class' => User::class,
-            'property' => 'username',
+return static function (ContainerConfigurator $containerConfigurator): void {
+    $containerConfigurator->extension('security', [
+        'password_hashers' => [
+            User::class => [
+                'algorithm' => 'auto',
+            ],
         ],
     ]);
 
-    $authenticators = [AppPresseAuthenticator::class];
-    if (interface_exists(LdapInterface::class)) {
-        $authenticators[] = PresseLdapAuthenticator::class;
-        $main['form_login_ldap'] = [
-            'service' => Ldap::class,
-            'check_path' => 'app_login',
-        ];
-    }
+    $containerConfigurator->extension(
+        'security',
+        [
+            'providers' => [
+                'presse_user_provider' => [
+                    'entity' => [
+                        'class' => User::class,
+                        'property' => 'username',
+                    ],
+                ],
+            ],
+        ]
+    );
 
-    // @see Symfony\Config\Security\FirewallConfig
     $main = [
         'provider' => 'presse_user_provider',
         'logout' => [
             'path' => 'app_logout',
         ],
-        'form_login' => [],
-        'entry_point' => AppPresseAuthenticator::class,
-        'custom_authenticators' => $authenticators,
         'login_throttling' => [
             'max_attempts' => 6, // per minute...
         ],
@@ -43,14 +44,29 @@ return static function (SecurityConfig $security) {
             'path' => '/',
             'always_remember_me' => true,
         ],
+        'form_login' => [],
+        'entry_point' => PresseAuthenticator::class,
+        'switch_user' => true,
     ];
 
-    $security
-        ->firewall('main', $main)
-        ->switchUser();
+    $authenticators = [PresseAuthenticator::class];
+    if (interface_exists(LdapInterface::class)) {
+        $authenticators[] = PresseLdapAuthenticator::class;
+        $main['form_login_ldap'] = [
+            'service' => Ldap::class,
+            'check_path' => 'app_login',
+        ];
+    }
 
-    $devFirewall = $security->firewall('dev');
-    $devFirewall
-        ->pattern('^/(_(profiler|wdt)|css|images|js)/')
-        ->security(false);
+    $main['custom_authenticator'] = $authenticators;
+
+    $containerConfigurator->extension(
+        'security',
+        [
+            'firewalls' => [
+                'main' => $main,
+            ],
+        ]
+    );
+
 };

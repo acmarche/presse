@@ -10,6 +10,9 @@
            class="btn btn-primary"><i class="ti ti-plus"></i> Ajouter un sous album</a>
     {% endif %}
 
+    <a href="{{ path('presse_notifier', { 'id': album.id }) }}" role="button"
+       class="btn btn-success"><i class="ti ti-edit"></i> Notifier</a>
+
     <a href="{{ path('album_edit', { 'id': album.id }) }}" role="button"
        class="btn btn-primary"><i class="ti ti-edit"></i> Editer</a>
 

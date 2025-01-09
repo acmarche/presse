@@ -11,13 +11,7 @@ class NotifierType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add(
-            'date',
-            DateType::class,
-            [
-                'help' => 'La date des articles et non la date d\'ajout',
-            ]
-        );
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

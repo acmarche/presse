@@ -25,6 +25,7 @@ class DestinataireType extends AbstractType
                 'prenom',
                 TextType::class,
                 [
+                    'label' => 'Prénom',
                     'required' => false,
                 ],
             )
@@ -34,7 +35,7 @@ class DestinataireType extends AbstractType
                 CheckboxType::class,
                 [
                     'required' => false,
-                    'label' => 'Joindre les articles en pièce jointe',
+                    'label' => 'Attacher les articles en pièce jointe',
                 ],
             )
             ->add(

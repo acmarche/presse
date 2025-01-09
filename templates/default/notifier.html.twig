@@ -9,7 +9,12 @@
 
         <div class="card-body">
             <div class="alert alert-info" role="alert">
-                Pas encore opérationnel.
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                <button class="btn btn-primary" type="submit">
+                    <i class="ti ti-device-floppy"></i> Confirmer la notification
+                </button>
+                {{ form_end(form) }}
             </div>
         </div>
 

@@ -23,11 +23,25 @@ class DestinataireRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Destinataire[] Returns an array of Destinataire objects
+     * @return Destinataire[]
      */
-    public function getAll()
+    public function getAll(): array
     {
-        return $this->createQueryBuilder('d')
+        return $this
+            ->createQueryBuilder('d')
+            ->orderBy('d.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Destinataire[]
+     */
+    public function findAllWantNotification(): array
+    {
+        return $this
+            ->createQueryBuilder('d')
+            ->andWhere('d.notification = true')
             ->orderBy('d.nom', 'ASC')
             ->getQuery()
             ->getResult();

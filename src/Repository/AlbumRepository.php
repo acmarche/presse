@@ -25,9 +25,10 @@ class AlbumRepository extends ServiceEntityRepository
     /**
      * @return Album[]
      */
-    public function getRoots():array
+    public function getRoots(): array
     {
-        return $this->createQueryBuilder('album')
+        return $this
+            ->createQueryBuilder('album')
             ->leftJoin('album.albums', 'childs')
             ->addSelect('childs')
             ->andWhere('album.parent IS NULL')
@@ -39,9 +40,10 @@ class AlbumRepository extends ServiceEntityRepository
     /**
      * @return Album[]
      */
-    public function getLasts(\DateTime|\DateTimeImmutable $date):array
+    public function getLasts(\DateTime|\DateTimeImmutable $date): array
     {
-        return $this->createQueryBuilder('album')
+        return $this
+            ->createQueryBuilder('album')
             ->andWhere('album.parent IS NULL')
             ->andWhere('album.date_album >= :date')
             ->setParameter('date', $date->format('Y-m-d'))
@@ -53,9 +55,10 @@ class AlbumRepository extends ServiceEntityRepository
     /**
      * @return Album[]
      */
-    public function getChilds(Album $album):array
+    public function getChilds(Album $album): array
     {
-        return $this->createQueryBuilder('album')
+        return $this
+            ->createQueryBuilder('album')
             ->andWhere('album.parent = :parent')
             ->setParameter('parent', $album)
             ->orderBy('album.date_album', 'DESC')
@@ -67,11 +70,12 @@ class AlbumRepository extends ServiceEntityRepository
      * @param $data
      * @return Album[]
      */
-    public function search($data):array
+    public function search($data): array
     {
         $mot = $data['keyword'] ?? null;
 
-        return $this->createQueryBuilder('album')
+        return $this
+            ->createQueryBuilder('album')
             ->andWhere('album.nom LIKE :mot OR album.description LIKE :mot')
             ->setParameter('mot', '%'.$mot.'%')
             ->orderBy('album.date_album', 'ASC')
@@ -79,6 +83,17 @@ class AlbumRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getByYear(mixed $year) {}
+    /**
+     * @return Album[]
+     */
+    public function findNotSended(): array
+    {
+        return $this
+            ->createQueryBuilder('album')
+            ->andWhere('album.sended = false')
+            ->getQuery()
+            ->getResult();
+    }
+
 
 }

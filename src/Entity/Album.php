@@ -49,6 +49,9 @@ class Album implements TimestampableInterface, Stringable
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $directoryName = null;
 
+    #[ORM\Column()]
+    public bool $sended = false;
+
     public function __construct(DateTimeInterface $date_album)
     {
         $this->createdAt = new DateTime();

@@ -19,22 +19,32 @@ class DestinataireType extends AbstractType
                 'nom',
                 TextType::class,
                 [
-                ]
+                ],
             )
             ->add(
                 'prenom',
                 TextType::class,
                 [
                     'required' => false,
-                ]
+                ],
             )
             ->add('email', EmailType::class)
             ->add(
-                'exterieur',
+                'attachment',
                 CheckboxType::class,
                 [
                     'required' => false,
-                ]
+                    'label' => 'Joindre les articles en pièce jointe',
+                ],
+            )
+            ->add(
+                'notification',
+                CheckboxType::class,
+                [
+                    'required' => false,
+                    'label' => 'Recevoir la revue de presse',
+                    'help' => 'Décochez cette case pour ne pas recevoir la revue de presse',
+                ],
             );
     }
 
@@ -43,7 +53,7 @@ class DestinataireType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => Destinataire::class,
-            ]
+            ],
         );
     }
 }

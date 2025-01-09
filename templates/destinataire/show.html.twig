@@ -6,19 +6,39 @@
 
     <div class="card mb-3">
         <div class="card-header">
-            <h2>{{ destinataire }}</h2>
+            <h2>{{ destinataire.nom|upper }} {{ destinataire.prenom }}</h2>
         </div>
         <div class="card-body">
             {% include '@AcMarchePresse/destinataire/_actions.html.twig' %}
 
-            {{ destinataire.email }}
-            <br />
-            Extérieur:
-            {% if destinataire.exterieur %}
-                Oui
-            {% else %}
-                Non
-            {% endif %}
+            <table class="table table-bordered">
+                <tr>
+                    <th>Email</th>
+                    <td>
+                        {{ destinataire.email }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Pièce jointe</th>
+                    <td>
+                        {% if destinataire.attachment %}
+                            Oui
+                        {% else %}
+                            Non
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Recevoir la revue de presse</th>
+                    <td>
+                        {% if destinataire.notification %}
+                            Oui
+                        {% else %}
+                            Non
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 

@@ -21,6 +21,8 @@
                 <tr>
                     <th>Nom</th>
                     <th>Email</th>
+                    <th>Pièce jointe</th>
+                    <th>Notification</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,10 +35,24 @@
                         <td>
                             {{ destinataire.email }}
                         </td>
+                        <td>
+                            {% if destinataire.attachment %}
+                                Oui
+                            {% else %}
+                                Non
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if destinataire.notification %}
+                                Oui
+                            {% else %}
+                                Non
+                            {% endif %}
+                        </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="2">no records found</td>
+                        <td colspan="4">no records found</td>
                     </tr>
                 {% endfor %}
                 </tbody>

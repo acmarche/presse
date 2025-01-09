@@ -18,8 +18,7 @@ class DestinataireController extends AbstractController
 {
     public function __construct(
         private DestinataireRepository $destinataireRepository,
-    ) {
-    }
+    ) {}
 
     #[Route(path: '/', name: 'presse_destinataire_index', methods: ['GET'])]
     public function index(): Response
@@ -28,7 +27,7 @@ class DestinataireController extends AbstractController
             '@AcMarchePresse/destinataire/index.html.twig',
             [
                 'destinataires' => $this->destinataireRepository->getAll(),
-            ]
+            ],
         );
     }
 
@@ -51,7 +50,7 @@ class DestinataireController extends AbstractController
             [
                 'destinataire' => $destinataire,
                 'form' => $form->createView(),
-            ]
+            ],
         );
     }
 
@@ -62,7 +61,7 @@ class DestinataireController extends AbstractController
             '@AcMarchePresse/destinataire/show.html.twig',
             [
                 'destinataire' => $destinataire,
-            ]
+            ],
         );
     }
 
@@ -73,6 +72,13 @@ class DestinataireController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->destinataireRepository->flush();
+
+            if ($destinataire->username) {
+                $this->addFlash(
+                    'info',
+                    'Ce destinataire provient du système informatique, les champs email, nom et prénom ne sont pas modifiables',
+                );
+            }
             $this->addFlash('success', 'Le destinataire a bien été modifié');
 
             return $this->redirectToRoute('presse_destinataire_show', [
@@ -85,17 +91,25 @@ class DestinataireController extends AbstractController
             [
                 'destinataire' => $destinataire,
                 'form' => $form->createView(),
-            ]
+            ],
         );
     }
 
-    #[Route(path: '/{id}', name: 'presse_destinataire_delete', methods: ['DELETE'])]
+    #[Route(path: '/{id}', name: 'presse_destinataire_delete', methods: ['POST'])]
     public function delete(Request $request, Destinataire $destinataire): RedirectResponse
     {
+        if ($destinataire->username) {
+            $this->addFlash('danger', 'Le destinataire ne peut être supprimé car il provient du système informatique');
+
+            return $this->redirectToRoute('presse_destinataire_index');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$destinataire->getId(), $request->request->get('_token'))) {
             $this->destinataireRepository->remove($destinataire);
             $this->destinataireRepository->flush();
             $this->addFlash('success', 'Le destinataire a bien été supprimé');
+        } else {
+            $this->addFlash('danger', 'Le destinataire n\'a pas été supprimé');
         }
 
         return $this->redirectToRoute('presse_destinataire_index');

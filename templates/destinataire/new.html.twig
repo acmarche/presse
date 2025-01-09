@@ -7,16 +7,11 @@
             <h2>Nouveau destinataire</h2>
         </div>
         <div class="card-body">
-            {{ form_start(form) }}
-            {{ form_errors(form) }}
-            {{ form_widget(form) }}
-            <button class="btn btn-primary" type="submit"><i class="ti ti-device-floppy"></i> Sauvegarder</button>
-            {{ form_end(form) }}
+            {% include '@AcMarchePresse/destinataire/_form.html.twig' %}
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('presse_destinataire_index') }}"><i
+                        class="ti ti-arrow-left"></i> Annuler</a>
         </div>
     </div>
-
-    <br/>
-    <a href="{{ path('presse_destinataire_index') }}"><i
-                class="ti ti-arrow-left"></i> Annuler</a>
-
 {% endblock %}

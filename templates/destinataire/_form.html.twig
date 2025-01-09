@@ -1,3 +1,25 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
+{{ form_errors(form) }}
+<div class="row">
+    <div class="col-md-6">
+        {{ form_row(form.nom) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.prenom) }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        {{ form_row(form.email) }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        {{ form_row(form.attachment) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.notification) }}
+    </div>
+</div>
+<button class="btn btn-primary" type="submit"><i class="ti ti-device-floppy"></i> Sauvegarder</button>
 {{ form_end(form) }}

@@ -4,18 +4,16 @@
 
     <div class="card mb-3">
         <div class="card-header">
-            <h3>Notifier</h3>
+            <h3>Notifier l'album {{ album.nicename }}</h3>
         </div>
 
         <div class="card-body">
-            <div class="alert alert-info" role="alert">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
                 <button class="btn btn-primary" type="submit">
                     <i class="ti ti-device-floppy"></i> Confirmer la notification
                 </button>
                 {{ form_end(form) }}
-            </div>
         </div>
 
     </div>

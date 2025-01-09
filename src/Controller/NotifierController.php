@@ -34,11 +34,12 @@ class NotifierController extends AbstractController
             $this->addFlash('warning', 'Dû au traitements des pièces jointes, les mails partiront dans l\'heure');
             $this->addFlash('success', 'La notification a bien été lancée');
 
-            return $this->redirectToRoute('presse_notifier');
+            return $this->redirectToRoute('homepage');
         }
 
         return $this->render('@AcMarchePresse/default/notifier.html.twig', [
             'form' => $form->createView(),
+            'album' => $album,
         ]);
     }
 }

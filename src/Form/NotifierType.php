@@ -15,6 +15,7 @@ class NotifierType extends AbstractType
         $builder->add('text', TextareaType::class, [
             'label' => 'Texte',
             'help' => 'Ajouter un texte au mail',
+            'attr' => ['rows' => 5],
         ]);
     }
 

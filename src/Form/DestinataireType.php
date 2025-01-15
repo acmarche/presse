@@ -44,7 +44,7 @@ class DestinataireType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'Recevoir la revue de presse',
-                    'help' => 'Décochez cette case pour ne pas recevoir la revue de presse',
+                    'help' => 'Si cette case est décochée la personne ne recevra pas la revue de presse',
                 ],
             );
     }

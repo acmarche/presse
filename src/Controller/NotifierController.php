@@ -28,10 +28,12 @@ class NotifierController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $album->sender = $this->getUser()->email;
             $album->sended = false;
+            $album->text = $form->get('text')->getData();
             $this->albumRepository->flush();
 
-            $this->addFlash('warning', 'Dû au traitements des pièces jointes, les mails partiront dans l\'heure');
+            $this->addFlash('warning', 'Dû au traitements des pièces jointes, les mails partiront dans maximum une heure');
             $this->addFlash('success', 'La notification a bien été lancée');
 
             return $this->redirectToRoute('homepage');

@@ -51,6 +51,10 @@ class Album implements TimestampableInterface, Stringable
 
     #[ORM\Column()]
     public bool $sended = false;
+    #[ORM\Column(type: 'text', nullable: true)]
+    public ?string $text = null;
+    #[ORM\Column(length: 50, nullable: true)]
+    public ?string $sender = null;
 
     public function __construct(DateTimeInterface $date_album)
     {

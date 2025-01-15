@@ -17,7 +17,7 @@ class User implements UserInterface, Stringable, PasswordAuthenticatedUserInterf
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     private ?string $username = null;
     #[ORM\Column(type: 'string', length: 100)]
-    private ?string $email = null;
+    public ?string $email = null;
     #[ORM\Column(type: 'json')]
     private array $roles = [];
     /**

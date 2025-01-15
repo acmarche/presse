@@ -20,11 +20,9 @@ class MailerPresse
 
     public function generateMessage(Album $album, bool $attachment): TemplatedEmail
     {
-        $sender = "";
-
         $message = (new TemplatedEmail())
             ->subject('Revue de presse : '.$album->niceName())
-            ->from(new Address('no-reply@marche.be', $sender))
+            ->from(new Address('no-reply@marche.be', $album->sender))
             ->htmlTemplate('@AcMarchePresse/mail/mail.html.twig')
             ->textTemplate('@AcMarchePresse/mail/mail.txt.twig')
             ->context(
@@ -32,8 +30,7 @@ class MailerPresse
                     'album' => $album,
                     'attachment' => $attachment,
                 ],
-            )
-            ->replyTo('no-reply@marche.be');
+            );
 
         if ($attachment) {
             $this->attachFiles($album, $message);

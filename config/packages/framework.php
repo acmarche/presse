@@ -1,19 +1,12 @@
 <?php
 
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Config\FrameworkConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->extension(
-        'framework',
-        [
-            'default_locale' => 'fr',
-            'session' => [
-                'handler_id' => 'session.handler.native_file',
-                'save_path' => '%kernel.cache_dir%/../../sessions',
-                'cookie_secure' => 'auto',
-                'cookie_samesite' => 'lax',
-                'cookie_lifetime' => 0,
-            ],
-        ]
-    );
+return static function (FrameworkConfig $frameworkConfig): void {
+    $frameworkConfig->router()->defaultUri('%env(PRESSE_URI)%');
+    $frameworkConfig->defaultLocale('fr');
+    $frameworkConfig->session([
+        'handler_id' => 'session.handler.native_file',
+        'save_path' => '%kernel.cache_dir%/../../sessions',
+    ]);
 };

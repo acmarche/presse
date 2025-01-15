@@ -1,7 +1,7 @@
 <br>
-{{ text|nl2br }}
+{{ album.text|nl2br }}
 <br>
 <br>
-{% if destinataire.attachment == false %}
+{% if attachment == false %}
     <a href="{{ url('album_show', {'id': album.id}) }}">Consultez sur la revue de presse</a>
 {% endif %}

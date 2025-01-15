@@ -1,7 +1,6 @@
 
-{{ text|nl2br }}
+{{ album.text|nl2br }}
 
-
-{% if destinataire.attachment == false %}
+{% if attachment == false %}
     {{ url('album_show', {'id': album.id}) }}
 {% endif %}

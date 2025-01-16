@@ -22,7 +22,7 @@ class MailerPresse
     {
         $message = (new TemplatedEmail())
             ->subject('Revue de presse : '.$album->niceName())
-            ->from(new Address('no-reply@marche.be', $album->sender))
+            ->from(new Address($album->sender))
             ->htmlTemplate('@AcMarchePresse/mail/mail.html.twig')
             ->textTemplate('@AcMarchePresse/mail/mail.txt.twig')
             ->context(

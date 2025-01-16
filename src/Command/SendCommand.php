@@ -34,32 +34,35 @@ class SendCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-
-        foreach ($this->albumRepository->findNotSended() as $album) {
-            $messageBase = $this->mailerPresse->generateMessage($album, false);
-            $messageWithAttachments = $this->mailerPresse->generateMessage($album, true);
-
-            foreach ($this->destinataireRepository->findAllWantNotification() as $recipient) {
-                $message = $messageBase;
-                if ($recipient->attachment) {
-                    $message = $messageWithAttachments;
-                }
-                if ($this->debug) {
-                    $message->to(new Address('jf@marche.be', $recipient->email));
-                } else {
-                    $message->to($recipient->email);
-                }
-                try {
-                    $this->mailer->send($message);
-                } catch (TransportExceptionInterface $e) {
-                    $io->error($e->getMessage());
-                }
-                $message = null;
-            }
-
-            $album->sended = true;
-            $this->albumRepository->flush();
+        $albums = $this->albumRepository->findNotSended();
+        if (count($albums) === 0) {
+            return Command::SUCCESS;
         }
+        $album = $albums[0];
+        $messageBase = $this->mailerPresse->generateMessage($album, false);
+        $messageWithAttachments = $this->mailerPresse->generateMessage($album, true);
+        $io->writeln($album->getId());
+        foreach ($this->destinataireRepository->findAllWantNotification() as $recipient) {
+            $message = $messageBase;
+            if ($recipient->attachment) {
+                $message = $messageWithAttachments;
+            }
+            if ($this->debug) {
+                $io->writeln($recipient->email);
+                $message->to(new Address('jf@marche.be', $recipient->email));
+            } else {
+                $message->to($recipient->email);
+            }
+            try {
+                $this->mailer->send($message);
+            } catch (TransportExceptionInterface $e) {
+                $io->error($e->getMessage());
+            }
+            $message = null;
+        }
+
+        $album->sended = true;
+        $this->albumRepository->flush();
 
         return Command::SUCCESS;
     }

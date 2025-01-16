@@ -16,11 +16,11 @@ use Symfony\Component\Mime\Address;
 
 #[AsCommand(
     name: 'presse:send',
-    description: 'Send articles by mail',
+    description: 'Send press review by mail',
 )]
 class SendCommand extends Command
 {
-    private bool $debug = true;
+    private bool $debug = false;
 
     public function __construct(
         private readonly MailerPresse $mailerPresse,

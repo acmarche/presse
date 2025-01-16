@@ -4,6 +4,8 @@
 <br>
 {% if attachment == false %}
     <a href="{{ url('album_show', {'id': album.id}) }}">Consultez sur la revue de presse</a>
+{% else %}
+    <p>Pour ne pas saturer votre boite mail, pensez à supprimer ce mail après avoir lu la revue de presse.</p>
 {% endif %}
 <br/>
 <br/>

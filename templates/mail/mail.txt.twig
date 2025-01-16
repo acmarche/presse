@@ -3,4 +3,8 @@
 
 {% if attachment == false %}
     {{ url('album_show', {'id': album.id}) }}
+{% else %}
+    Pour ne pas saturer votre boite mail, pensez à supprimer ce mail après avoir lu la revue de presse.
 {% endif %}
+
+Si vous ne souhaitez plus recevoir la revue de presse, vous pouvez le signaler en répondant à ce mail.

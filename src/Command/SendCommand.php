@@ -20,7 +20,7 @@ use Symfony\Component\Mime\Address;
 )]
 class SendCommand extends Command
 {
-    private bool $debug = false;
+    private bool $debug = true;
 
     public function __construct(
         private readonly MailerPresse $mailerPresse,
@@ -39,9 +39,15 @@ class SendCommand extends Command
             return Command::SUCCESS;
         }
         $album = $albums[0];
-        $messageBase = $this->mailerPresse->generateMessage($album, false);
-        $messageWithAttachments = $this->mailerPresse->generateMessage($album, true);
         $io->writeln($album->getId());
+        try {
+            $messageBase = $this->mailerPresse->generateMessage($album, false);
+            $messageWithAttachments = $this->mailerPresse->generateMessage($album, true);
+        } catch (\Exception $exception) {
+            $io->error($exception->getMessage());
+
+            return Command::FAILURE;
+        }
         foreach ($this->destinataireRepository->findAllWantNotification() as $recipient) {
             $message = $messageBase;
             if ($recipient->attachment) {

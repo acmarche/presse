@@ -50,7 +50,7 @@ class Album implements TimestampableInterface, Stringable
     private ?string $directoryName = null;
 
     #[ORM\Column()]
-    public bool $sended = false;
+    public bool $sended = true;
     #[ORM\Column(type: 'text', nullable: true)]
     public ?string $text = null;
     #[ORM\Column(length: 50, nullable: true)]

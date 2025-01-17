@@ -25,10 +25,31 @@ class DestinataireRepository extends ServiceEntityRepository
     /**
      * @return Destinataire[]
      */
-    public function getAll(): array
+    public function search(?string $name, ?bool $attachment, ?bool $notification, ?bool $externe): array
     {
-        return $this
-            ->createQueryBuilder('d')
+        $qb = $this
+            ->createQueryBuilder('d');
+        if ($name) {
+            $qb
+                ->andWhere('d.nom LIKE :nom OR d.prenom LIKE :nom')
+                ->setParameter('nom', '%'.$name.'%');
+        }
+        if ($attachment !== null) {
+            $qb
+                ->andWhere('d.attachment = :attachment')
+                ->setParameter('attachment', $attachment);
+        }
+        if ($notification !== null) {
+            $qb
+                ->andWhere('d.notification = :notification')
+                ->setParameter('notification', $notification);
+        }
+        if ($externe !== null) {
+            $qb
+                ->andWhere('d.username IS NULL');
+        }
+
+        return $qb
             ->orderBy('d.nom', 'ASC')
             ->getQuery()
             ->getResult();
@@ -46,4 +67,18 @@ class DestinataireRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return Destinataire[]
+     */
+    public function getAll(): array
+    {
+        return $this
+            ->createQueryBuilder('d')
+            ->orderBy('d.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
 }

@@ -4,6 +4,7 @@ namespace AcMarche\Presse\Controller;
 
 use AcMarche\Presse\Entity\Destinataire;
 use AcMarche\Presse\Form\DestinataireType;
+use AcMarche\Presse\Form\SearchDestinataireType;
 use AcMarche\Presse\Repository\DestinataireRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,14 +21,33 @@ class DestinataireController extends AbstractController
         private DestinataireRepository $destinataireRepository,
     ) {}
 
-    #[Route(path: '/', name: 'presse_destinataire_index', methods: ['GET'])]
-    public function index(): Response
+    #[Route(path: '/', name: 'presse_destinataire_index', methods: ['GET', 'POST'])]
+    public function index(Request $request): Response
     {
+        $form = $this->createForm(SearchDestinataireType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $destinataires = $this->destinataireRepository->search(
+                $data['name'],
+                $data['attachment'],
+                $data['notification'],
+                $data['externe'],
+            );
+        } else {
+            $destinataires = $this->destinataireRepository->getAll();
+        }
+        $response = new Response(null, $form->isSubmitted() ? Response::HTTP_ACCEPTED : Response::HTTP_OK);
+
         return $this->render(
             '@AcMarchePresse/destinataire/index.html.twig',
             [
-                'destinataires' => $this->destinataireRepository->getAll(),
+                'destinataires' => $destinataires,
+                'form' => $form->createView(),
+                'search' => $form->isSubmitted(),
             ],
+            $response,
         );
     }
 

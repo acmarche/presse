@@ -20,7 +20,7 @@ use Symfony\Component\Mime\Address;
 )]
 class SendCommand extends Command
 {
-    private bool $debug = false;
+    private bool $debug = true;
 
     public function __construct(
         private readonly MailerPresse $mailerPresse,
@@ -39,7 +39,9 @@ class SendCommand extends Command
             return Command::SUCCESS;
         }
         $album = $albums[0];
-        $io->writeln($album->getId());
+        if ($this->debug) {
+            $io->writeln($album->getId());
+        }
         try {
             $messageBase = $this->mailerPresse->generateMessage($album, false);
             $messageWithAttachments = $this->mailerPresse->generateMessage($album, true);

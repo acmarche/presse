@@ -20,7 +20,7 @@ use Symfony\Component\Mime\Address;
 )]
 class SendCommand extends Command
 {
-    private bool $debug = true;
+    private bool $debug = false;
 
     public function __construct(
         private readonly MailerPresse $mailerPresse,

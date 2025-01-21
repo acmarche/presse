@@ -52,6 +52,8 @@ class Album implements TimestampableInterface, Stringable
     #[ORM\Column()]
     public bool $sended = true;
     #[ORM\Column(type: 'text', nullable: true)]
+    public ?string $subject = null;
+    #[ORM\Column(type: 'text', nullable: true)]
     public ?string $text = null;
     #[ORM\Column(length: 50, nullable: true)]
     public ?string $sender = null;

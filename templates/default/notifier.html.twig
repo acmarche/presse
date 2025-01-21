@@ -8,13 +8,18 @@
         </div>
 
         <div class="card-body">
-                {{ form_start(form) }}
-                {{ form_errors(form) }}
-                {{ form_row(form.text) }}
-                <button class="btn btn-primary" type="submit">
-                    <i class="ti ti-device-floppy"></i> Confirmer la notification
-                </button>
-                {{ form_end(form) }}
+            <div class="alert alert-info" role="alert">
+                En lien vers l'album sera automatiquement ajouté au mail.<br>
+                Les personnes recevant les pièces jointes n'auront pas ce lien.
+            </div>
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {{ form_row(form.subject) }}
+            {{ form_row(form.text) }}
+            <button class="btn btn-primary" type="submit">
+                <i class="ti ti-device-floppy"></i> Confirmer la notification
+            </button>
+            {{ form_end(form) }}
         </div>
 
     </div>

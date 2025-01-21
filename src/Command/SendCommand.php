@@ -2,9 +2,12 @@
 
 namespace AcMarche\Presse\Command;
 
+use AcMarche\Presse\Entity\Destinataire;
 use AcMarche\Presse\Repository\AlbumRepository;
 use AcMarche\Presse\Repository\DestinataireRepository;
+use AcMarche\Presse\Repository\MessageRepository;
 use AcMarche\Presse\Service\MailerPresse;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,12 +23,14 @@ use Symfony\Component\Mime\Address;
 )]
 class SendCommand extends Command
 {
-    private bool $debug = false;
+    private bool $debug = true;
+    private SymfonyStyle $io;
 
     public function __construct(
         private readonly MailerPresse $mailerPresse,
         private readonly AlbumRepository $albumRepository,
         private readonly DestinataireRepository $destinataireRepository,
+        private readonly MessageRepository $messageRepository,
         private readonly MailerInterface $mailer,
     ) {
         parent::__construct();
@@ -33,46 +38,81 @@ class SendCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
+        $this->sendAlbums();
+        $this->sendMessages();
+
+        return Command::SUCCESS;
+    }
+
+    private function sendAlbums(): void
+    {
         $albums = $this->albumRepository->findNotSended();
         if (count($albums) === 0) {
-            return Command::SUCCESS;
+            return;
         }
         $album = $albums[0];
         if ($this->debug) {
-            $io->writeln($album->getId());
+            $this->io->writeln($album->getId());
         }
         try {
-            $messageBase = $this->mailerPresse->generateMessage($album, false);
-            $messageWithAttachments = $this->mailerPresse->generateMessage($album, true);
+            $messageBase = $this->mailerPresse->generateMessageForAlbum($album, false);
+            $messageWithAttachments = $this->mailerPresse->generateMessageForAlbum($album, true);
         } catch (\Exception $exception) {
-            $io->error($exception->getMessage());
+            $this->io->error($exception->getMessage());
 
-            return Command::FAILURE;
+            return;
         }
         foreach ($this->destinataireRepository->findAllWantNotification() as $recipient) {
             $message = $messageBase;
             if ($recipient->attachment) {
                 $message = $messageWithAttachments;
             }
-            if ($this->debug) {
-                $io->writeln($recipient->email);
-                $message->to(new Address('jf@marche.be', $recipient->email));
-            } else {
-                $message->to($recipient->email);
-            }
-            try {
-                $this->mailer->send($message);
-            } catch (TransportExceptionInterface $e) {
-                $io->error($e->getMessage());
-            }
-            $message = null;
+            $this->sendEmail($message, $recipient);
         }
 
         $album->sended = true;
         $this->albumRepository->flush();
+    }
 
-        return Command::SUCCESS;
+    private function sendMessages(): void
+    {
+        $messages = $this->messageRepository->findNotSended();
+        if (count($messages) === 0) {
+            return;
+        }
+        $message = $messages[0];
+        if ($this->debug) {
+            $this->io->writeln($message->getId());
+        }
+        try {
+            $messageBase = $this->mailerPresse->generateMessage($message);
+        } catch (\Exception $exception) {
+            $this->io->error($exception->getMessage());
+
+            return;
+        }
+        foreach ($this->destinataireRepository->findAllWantNotification() as $recipient) {
+            $this->sendEmail($messageBase, $recipient);
+        }
+
+        $message->sended = true;
+        $this->messageRepository->flush();
+    }
+
+    private function sendEmail(TemplatedEmail $templatedEmail, Destinataire $recipient): void
+    {
+        if ($this->debug) {
+            $this->io->writeln($recipient->email);
+            $templatedEmail->to(new Address('jf@marche.be', $recipient->email));
+        } else {
+            $templatedEmail->to($recipient->email);
+        }
+        try {
+            $this->mailer->send($templatedEmail);
+        } catch (TransportExceptionInterface $e) {
+            $this->io->error($e->getMessage());
+        }
     }
 
 }

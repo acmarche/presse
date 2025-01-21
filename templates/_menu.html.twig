@@ -1,8 +1,13 @@
 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+        <a href="{{ path('presse_message_new') }}" class="nav-link"><i class="ti ti-brand-telegram"></i>
+            Envoyer un message</a>
+    </li>
     {% if is_granted('ROLE_PRESSE_ADMIN') %}
         <li class="nav-item dropdown">
-            <button type="button" class="nav-link dropdown-toggle"  id="navbarDropdown" data-bs-toggle="dropdown">
-                <i class="ti ti-dots-vertical"></i> <b class="caret"></b> Paramètres...</button>
+            <button type="button" class="nav-link dropdown-toggle" id="navbarDropdown" data-bs-toggle="dropdown">
+                <i class="ti ti-dots-vertical"></i> <b class="caret"></b> Paramètres...
+            </button>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
                     <a class="dropdown-item" href="{{ path('presse_destinataire_index') }}">Les destinataires</a>

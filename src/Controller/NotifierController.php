@@ -22,12 +22,13 @@ class NotifierController extends AbstractController
     #[Route(path: '/notifier/{id}', name: 'presse_notifier', methods: ['GET', 'POST'])]
     public function index(Request $request, Album $album): RedirectResponse|Response
     {
-        $form = $this->createForm(NotifierType::class, [
+        $form = $this->createForm(NotifierType::class, ['subject' =>'Revue de presse : '.$album->niceName()
 
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $album->subject = $form->getData()['subject'];
             $album->sender = $this->getUser()->email;
             $album->sended = false;
             $album->text = $form->get('text')->getData();

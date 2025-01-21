@@ -1,0 +1,21 @@
+{% extends '@AcMarchePresse/base.html.twig' %}
+{% block body %}
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h3>Envoyer un message</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                Ce formulaire permet d'envoyer un mail à tous les destinataires de la revue de presse.
+                <br/>
+                Pour notifier un album, préféré le bouton "notifier" de l'album
+            </div>
+            {{ include('@AcMarchePresse/message/_form.html.twig') }}
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('homepage') }}"><i
+                        class="ti ti-arrow-left"></i> Annuler</a>
+        </div>
+    </div>
+{% endblock %}

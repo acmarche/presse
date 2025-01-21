@@ -2,13 +2,15 @@
 
 namespace AcMarche\Presse\Form;
 
+use AcMarche\Presse\Entity\Message;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
-class NotifierType extends AbstractType
+class MessageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -17,9 +19,12 @@ class NotifierType extends AbstractType
                 'label' => 'Sujet',
             ])
             ->add('text', TextareaType::class, [
-                'label' => 'Texte',
-                'help' => 'Ajouter un texte au mail',
+                'label' => 'Contenu du mail',
                 'attr' => ['rows' => 5],
+            ])
+            ->add('file', VichFileType::class, [
+                'label' => 'Pièce jointe',
+                'allow_delete' => false,
             ]);
     }
 
@@ -27,6 +32,7 @@ class NotifierType extends AbstractType
     {
         $resolver->setDefaults(
             [
+                'data_class' => Message::class,
             ],
         );
     }

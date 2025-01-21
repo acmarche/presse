@@ -11,6 +11,18 @@ class PresseExtensionRuntime implements RuntimeExtensionInterface
         private readonly ArticleRepository $articleRepository,
     ) {}
 
+    public function autoLinkUrls(?string $text): ?string
+    {
+        if (!$text) {
+            return null;
+        }
+        // Regular expression to match URLs
+        $pattern = '/(https?:\/\/[^\s]+)/i';
+        $replacement = '<a href="$1" target="_blank">$1</a>';
+
+        return preg_replace($pattern, $replacement, $text);
+    }
+
     public function articlePath(int $articleId): ?string
     {
         if ($article = $this->articleRepository->find($articleId)) {

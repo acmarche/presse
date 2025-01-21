@@ -1,9 +1,9 @@
 <br>
-{{ album.text|nl2br }}
+{{ album.text|auto_link_urls|nl2br }}
 <br>
 <br>
 {% if attachment == false %}
-    <a href="{{ url('album_show', {'id': album.id}) }}">Consultez sur la revue de presse</a>
+    <a href="{{ url('album_show', {'id': album.id}) }}">Consultez la revue de presse {{ album.nicename }}</a>
 {% else %}
     <br/>
     ----------------------

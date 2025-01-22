@@ -9,6 +9,7 @@ use AcMarche\Presse\Search\Ocr;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class MailerPresse
 {
@@ -18,6 +19,7 @@ class MailerPresse
         #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
         private readonly ArticleRepository $articleRepository,
         private readonly Ocr $ocr,
+        private readonly SluggerInterface $slugger,
     ) {}
 
     public function generateMessageForAlbum(Album $album, bool $attachment): TemplatedEmail
@@ -47,7 +49,7 @@ class MailerPresse
         foreach ($articles as $article) {
             $path = $this->ocr->articleFile($article);
             if (is_readable($path)) {
-                $message->attachFromPath($path);
+                $message->attachFromPath($path,$this->slugger->slug($article->nom));
             }
         }
     }

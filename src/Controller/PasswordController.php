@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/password')]
-#[IsGranted('ROLE_PRESSE_ADMIN')]
+#[IsGranted('ROLE_API_ADMIN')]
 class PasswordController extends AbstractController
 {
     public function __construct(

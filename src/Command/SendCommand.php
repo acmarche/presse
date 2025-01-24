@@ -23,7 +23,7 @@ use Symfony\Component\Mime\Address;
 )]
 class SendCommand extends Command
 {
-    private bool $debug = false;
+    private bool $debug = true;
     private SymfonyStyle $io;
 
     public function __construct(

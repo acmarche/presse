@@ -49,7 +49,8 @@ class MailerPresse
         foreach ($articles as $article) {
             $path = $this->ocr->articleFile($article);
             if (is_readable($path)) {
-                $message->attachFromPath($path,$this->slugger->slug($article->nom));
+                $name = $this->slugger->slug($article->nom).'-'.$article->fileName;
+                $message->attachFromPath($path,$name);
             }
         }
     }

@@ -38,13 +38,13 @@ class PresseService
             $data[] = [
                 'id' => $article->getId(),
                 'dateArticle' => $article->dateArticle->format('Y-m-d'),
-                'nom' => $article->nom,
-                'url' => $this->router->generate(
+                'title' => $article->nom,
+                'link' => $this->router->generate(
                     'article_show',
                     ['id' => $article->getId()],
                     RouterInterface::ABSOLUTE_URL,
                 ),
-                'file' => $this->uri.'files/'.$article->getAlbum()->getDirectoryName(
+                'image' => $this->uri.'files/'.$article->getAlbum()->getDirectoryName(
                     ).DIRECTORY_SEPARATOR.$article->fileName,
             ];
         }

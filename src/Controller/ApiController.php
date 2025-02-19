@@ -16,7 +16,7 @@ class ApiController extends AbstractController
         private readonly PresseService $presseService,
     ) {}
 
-    #[Route(path: '/')]
+    #[Route(path: '/articles',methods: ['GET'])]
     public function index(): JsonResponse
     {
         $articles = $this->articleRepository->findLast();

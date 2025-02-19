@@ -40,7 +40,7 @@ class AlbumRepository extends ServiceEntityRepository
     /**
      * @return Album[]
      */
-    public function getLasts(\DateTime|\DateTimeImmutable $date): array
+    public function findLastByDate(\DateTime|\DateTimeImmutable $date): array
     {
         return $this
             ->createQueryBuilder('album')

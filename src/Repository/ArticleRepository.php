@@ -26,20 +26,6 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[]
      */
-    public function getByDate(\DateTime|\DateTimeImmutable $dateTime): array
-    {
-        return $this
-            ->createQueryBuilder('article')
-            ->andWhere('article.dateArticle = :date')
-            ->setParameter('date', $dateTime->format('Y-m-d'))
-            ->orderBy('article.id', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return Article[]
-     */
     public function findByAlbum(Album $album): array
     {
         return $this
@@ -76,6 +62,19 @@ class ArticleRepository extends ServiceEntityRepository
             ->createQueryBuilder('article')
             ->andWhere('article.dateArticle LIKE :year')
             ->setParameter('year', $year.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Article[]
+     */
+    public function findLast(int $max = 20): array
+    {
+        return $this
+            ->createQueryBuilder('article')
+            ->setMaxResults($max)
+            ->orderBy('article.id', 'DESC')
             ->getQuery()
             ->getResult();
     }

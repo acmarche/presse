@@ -24,7 +24,7 @@ class DefaultController extends AbstractController
     {
         $end = new DateTime();
         $end->modify('-12 months');
-        $albums = $this->albumRepository->getLasts($end);
+        $albums = $this->albumRepository->findLastByDate($end);
 
         return $this->render('@AcMarchePresse/default/index.html.twig', [
             'albums' => $albums,

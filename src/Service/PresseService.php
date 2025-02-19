@@ -10,10 +10,45 @@
 
 namespace AcMarche\Presse\Service;
 
+use AcMarche\Presse\Entity\Article;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Routing\RouterInterface;
+
 class PresseService
 {
+    public function __construct(
+        #[Autowire(env: 'PRESSE_URI')]
+        private readonly string $uri,
+        private readonly RouterInterface $router,
+    ) {}
+
     public static function getRoles(): array
     {
         return ['ROLE_PRESSE', 'ROLE_PRESSE_ADMIN'];
+    }
+
+    /**
+     * @param array|Article[] $articles
+     * @return array
+     */
+    public function serializeArticles(array $articles): array
+    {
+        $data = [];
+        foreach ($articles as $article) {
+            $data[] = [
+                'id' => $article->getId(),
+                'dateArticle' => $article->dateArticle->format('Y-m-d'),
+                'nom' => $article->nom,
+                'url' => $this->router->generate(
+                    'article_show',
+                    ['id' => $article->getId()],
+                    RouterInterface::ABSOLUTE_URL,
+                ),
+                'file' => $this->uri.'files/'.$article->getAlbum()->getDirectoryName(
+                    ).DIRECTORY_SEPARATOR.$article->fileName,
+            ];
+        }
+
+        return $data;
     }
 }

@@ -19,7 +19,7 @@ class ApiController extends AbstractController
     #[Route(path: '/articles',methods: ['GET'])]
     public function index(): JsonResponse
     {
-        $articles = $this->articleRepository->findLast(10);
+        $articles = $this->articleRepository->findLast(8);
         $data = $this->presseService->serializeArticles($articles);
 
         return $this->json($data);

@@ -34,7 +34,7 @@ class NotifierController extends AbstractController
             $album->text = $form->get('text')->getData();
             $this->albumRepository->flush();
 
-            $this->addFlash('warning', 'Dû au traitements des pièces jointes, les mails partiront dans maximum une heure');
+            $this->addFlash('warning', 'Dû au traitements des pièces jointes, les mails partiront dans la demi-heure');
             $this->addFlash('success', 'La notification a bien été lancée');
 
             return $this->redirectToRoute('homepage');

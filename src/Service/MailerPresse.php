@@ -26,7 +26,7 @@ class MailerPresse
     {
         $message = (new TemplatedEmail())
             ->subject($album->subject)
-            ->from(new Address($album->sender))
+            ->from(new Address("no-reply@marche.be", $album->sender))
             ->htmlTemplate('@AcMarchePresse/mail/album.html.twig')
             ->textTemplate('@AcMarchePresse/mail/album.txt.twig')
             ->context(
@@ -50,7 +50,7 @@ class MailerPresse
             $path = $this->ocr->articleFile($article);
             if (is_readable($path)) {
                 $name = $this->slugger->slug($article->nom).'-'.$article->fileName;
-                $message->attachFromPath($path,$name);
+                $message->attachFromPath($path, $name);
             }
         }
     }
@@ -59,7 +59,7 @@ class MailerPresse
     {
         $email = (new TemplatedEmail())
             ->subject($message->subject)
-            ->from(new Address($message->sender))
+            ->from(new Address('no-reply@marche.be', $message->sender))
             ->htmlTemplate('@AcMarchePresse/mail/message.html.twig')
             ->textTemplate('@AcMarchePresse/mail/message.txt.twig')
             ->context(
